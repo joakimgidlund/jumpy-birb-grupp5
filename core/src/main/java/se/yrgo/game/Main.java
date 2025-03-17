@@ -22,12 +22,12 @@ public class Main extends ApplicationAdapter {
 
     private FitViewport viewport;
 
-    private Obstacle obstacle;
+    private Obstacle firstObstacle;
     private GameObject player;
 
     private int speed;
 
-    private static final int screenWidth = 1024;
+    private static final int screenWidth = 1280;
     private static final int screenHeight = 720;
 
     @Override
@@ -43,7 +43,7 @@ public class Main extends ApplicationAdapter {
         obs = new Texture("obstacle.png");
         birb = new Texture("birb.png");
 
-        obstacle = new Obstacle(obs, 924, 0, 200, 100, 500);
+        firstObstacle = new Obstacle(obs, 924, 0, 200, 100, 600);
         player = new GameObject(birb, 50, 360, 50, 50);
         obstacleList = new ArrayList<>();
     }
@@ -56,17 +56,8 @@ public class Main extends ApplicationAdapter {
     @Override
     public void render() {
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
-        if(obstacleList.isEmpty()) {
-            obstacleList.add(obstacle);
-        }
 
-        if (obstacleList.get(obstacleList.size() - 1).getDown().x < 700) {
-            obstacleList.add(new Obstacle(obs, 1124, 0, 100, 200, 600));
-        }
-
-        if (obstacleList.get(0).getDown().x < -100) {
-            obstacleList.remove(0);
-        }
+        obstacleLogic();
 
         viewport.apply();
 
@@ -97,5 +88,23 @@ public class Main extends ApplicationAdapter {
         bg.dispose();
         obs.dispose();
         birb.dispose();
+    }
+
+    public void obstacleLogic() {
+        
+        //Adds the first obstacle on execution
+        if(obstacleList.isEmpty()) {
+            obstacleList.add(firstObstacle);
+        }
+
+        //Creates a new obstacle when the last obstacle on screen reaches below 700 pixels.
+        if (obstacleList.get(obstacleList.size() - 1).getDown().x < 700) {
+            obstacleList.add(new Obstacle(obs, 1280, 0, 100, 200, 600));
+        }
+
+        //Removes the first obstacle that goes off-screen.
+        if (obstacleList.get(0).getDown().x < -100) {
+            obstacleList.remove(0);
+        }
     }
 }
