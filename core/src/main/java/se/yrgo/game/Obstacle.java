@@ -6,31 +6,31 @@ import com.badlogic.gdx.math.Rectangle;
 public class Obstacle {
 
     private Texture texture;
-    private Rectangle down;
-    private Rectangle up;
+    private Rectangle bottomRect;
+    private Rectangle topRect;
     private int gap;
 
     public Obstacle(Texture texture, int x, int y, int width, int height, int gap) {
         this.texture = texture;
         this.gap = gap;
-        down = new Rectangle(x, y, width, height);
-        up = new Rectangle(x, y + gap, width, height);
+        bottomRect = new Rectangle(x, y, width, height);
+        topRect = new Rectangle(x, y + height + gap, width, 720);
     }
 
     public Texture getTexture() {
         return texture;
     }
 
-    public Rectangle getDown() {
-        return down;
+    public Rectangle getBottomRect() {
+        return bottomRect;
     }
 
-    public Rectangle getUp() {
-        return up;
+    public Rectangle getTopRect() {
+        return topRect;
     }
 
     public void setPosition(int speed) {
-        down.x += speed;
-        up.x += speed;
+        bottomRect.x += speed;
+        topRect.x += speed;
     }
 }

@@ -1,6 +1,7 @@
 package se.yrgo.game;
 
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -13,7 +14,13 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
  * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all
  * platforms.
  */
+
 public class Main extends ApplicationAdapter {
+
+    private static final int screenWidth = 1280;
+    private static final int screenHeight = 720;
+    private static final int gap = 250;
+
     private ArrayList<Obstacle> obstacleList;
     private SpriteBatch batch;
     private Texture obs;
@@ -26,9 +33,6 @@ public class Main extends ApplicationAdapter {
     private GameObject player;
 
     private int speed;
-
-    private static final int screenWidth = 1280;
-    private static final int screenHeight = 720;
 
     @Override
     public void create() {
@@ -43,9 +47,10 @@ public class Main extends ApplicationAdapter {
         obs = new Texture("obstacle.png");
         birb = new Texture("birb.png");
 
-        firstObstacle = new Obstacle(obs, 924, 0, 200, 100, 600);
+        firstObstacle = new Obstacle(obs, 1380, 0, 100, 200, gap);
         player = new GameObject(birb, 50, 360, 50, 50);
         obstacleList = new ArrayList<>();
+        obstacleList.add(firstObstacle);
     }
 
     @Override
@@ -57,29 +62,47 @@ public class Main extends ApplicationAdapter {
     public void render() {
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
 
-        obstacleLogic();
-
         viewport.apply();
 
+        obstacleLogic();
+
+        drawing();
+    }
+
+    private void drawing() {
         batch.begin();
         batch.draw(bg, 0, 0);
+
+        // Iterate through the obstacle list and draw them all on screen
         for (Obstacle o : obstacleList) {
-            batch.draw(o.getTexture(), o.getDown().x, o.getDown().y);
-            batch.draw(o.getTexture(), o.getUp().x, o.getUp().y);
+            batch.draw(o.getTexture(), o.getBottomRect().x, o.getBottomRect().y, o.getBottomRect().width,
+                    o.getBottomRect().height);
+            batch.draw(o.getTexture(), o.getTopRect().x, o.getTopRect().y, o.getTopRect().width, o.getTopRect().height);
         }
 
-        obstacleList.get(0).setPosition(-speed);
-        if(obstacleList.size() > 1)
-            obstacleList.get(1).setPosition(-speed);
-
-
-        // for(Obstacle o : obstacleList) {
-        //     o.setPosition(-speed);
-        // }
-        // batch.draw(obstacle.getTexture(), obstacle.getPosition().x,
-        // obstacle.getPosition().y);
+        //Draw player character
         batch.draw(player.getTexture(), player.getPosition().x, player.getPosition().y);
         batch.end();
+    }
+
+    public void obstacleLogic() {
+
+        // Sets the speed (updates position on all elements, "movement")
+        for (Obstacle o : obstacleList) {
+            o.setPosition(-speed);
+        }
+
+        // Creates a new obstacle when the last obstacle on screen reaches below 700
+        // pixels.
+        if (obstacleList.get(obstacleList.size() - 1).getBottomRect().x < 700) {
+            int height = ThreadLocalRandom.current().nextInt(350) + 100;
+            obstacleList.add(new Obstacle(obs, 1280, 0, 100, height, gap));
+        }
+
+        // Removes the first obstacle that goes off-screen.
+        if (obstacleList.get(0).getBottomRect().x < -100) {
+            obstacleList.remove(0);
+        }
     }
 
     @Override
@@ -88,23 +111,5 @@ public class Main extends ApplicationAdapter {
         bg.dispose();
         obs.dispose();
         birb.dispose();
-    }
-
-    public void obstacleLogic() {
-        
-        //Adds the first obstacle on execution
-        if(obstacleList.isEmpty()) {
-            obstacleList.add(firstObstacle);
-        }
-
-        //Creates a new obstacle when the last obstacle on screen reaches below 700 pixels.
-        if (obstacleList.get(obstacleList.size() - 1).getDown().x < 700) {
-            obstacleList.add(new Obstacle(obs, 1280, 0, 100, 200, 600));
-        }
-
-        //Removes the first obstacle that goes off-screen.
-        if (obstacleList.get(0).getDown().x < -100) {
-            obstacleList.remove(0);
-        }
     }
 }
