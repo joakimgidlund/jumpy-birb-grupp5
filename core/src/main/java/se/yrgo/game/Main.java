@@ -9,6 +9,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.Input.Buttons;
+import com.badlogic.gdx.Input;
 
 /**
  * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all
@@ -33,6 +36,11 @@ public class Main extends ApplicationAdapter {
     private GameObject player;
 
     private int speed;
+    private float y = 10;
+    private float yVelocity = 0;
+    float gravity = -2.5f;
+    float jumpStrength = 10;
+    boolean onGround = true;
 
     @Override
     public void create() {
@@ -64,10 +72,39 @@ public class Main extends ApplicationAdapter {
 
         viewport.apply();
 
+        update();
         obstacleLogic();
 
         drawing();
     }
+
+    public void input() {
+        int speed = 10;
+
+        //Control the birb with SPACE key
+        if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            yVelocity = jumpStrength;
+        }
+        /*Control the birb with left mouse click. You can alternate between Space key and
+        mouse click in the same game */
+        if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+            yVelocity = jumpStrength;
+        }
+    }
+
+    public void update() {
+        input();   //Handles user input with SPACE kay
+        yVelocity += gravity;  //Applies gravity
+        y += yVelocity;   //Updates y position
+
+        player.setPosition(0, (int) y);
+
+//        if(y < 0){        was supposed to prevent the birb from falling below ground level - not working
+//            y = 0;
+//            yVelocity = 0;
+//        }
+    }
+
 
     private void drawing() {
         batch.begin();
