@@ -41,11 +41,9 @@ public class Main extends ApplicationAdapter {
     private boolean isCollided; // Currently used for collision testing, might impact game flow later
 
     private int speed;
-    private float y = 10;
     private float yVelocity = 0;
     float gravity = -2.5f;
-    float jumpStrength = 10;
-    boolean onGround = true;
+    float jumpStrength = 30;
 
     @Override
     public void create() {
@@ -63,7 +61,7 @@ public class Main extends ApplicationAdapter {
         font = new BitmapFont();
 
         Obstacle firstObstacle = new Obstacle(obs, 1380, 0, 100, 200, GAP);
-        player = new GameObject(birb, 50, 335, 50, 50);
+        player = new GameObject(birb, 50, 335, 50, 50, -2.5f);
         obstacleList = new ArrayList<>();
         obstacleList.add(firstObstacle);
 
@@ -83,7 +81,8 @@ public class Main extends ApplicationAdapter {
 
         viewport.apply();
 
-        update();
+        input();
+        updateGameObjects();
         obstacleLogic();
 
         collision();
@@ -92,31 +91,21 @@ public class Main extends ApplicationAdapter {
     }
 
     public void input() {
-        int speed = 10;
 
-        //Control the birb with SPACE key
-        if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            yVelocity = jumpStrength;
+        //Control the birb with SPACE key and mouse click
+        if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)
+            || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
+            || Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
+            player.setyVelocity(jumpStrength);
         }
-        /*Control the birb with left mouse click. You can alternate between Space key and
-        mouse click in the same game */
-        if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-            yVelocity = jumpStrength;
+        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            Gdx.app.exit();
         }
+
     }
 
-    public void update() {
-        input();   //Handles user input with SPACE kay
-        yVelocity += gravity;  //Applies gravity
-        y += yVelocity;   //Updates y position
-
-        //Update the birbs position with the new y value
-        player.setPosition(0, (int) y);
-
-        if(y < 0){
-            y = 0;
-            yVelocity = 0;
-        }
+    public void updateGameObjects() {
+        player.movement();
     }
 
 
@@ -124,13 +113,7 @@ public class Main extends ApplicationAdapter {
         batch.begin();
         batch.draw(bg, 0, 0);
 
-        // Iterate through the obstacle list and draw them all on screen
-        for (Obstacle o : obstacleList) {
-            batch.draw(o.getTexture(), o.getBottomRect().x, o.getBottomRect().y,
-                    0, 0, (int) o.getBottomRect().width, (int) o.getBottomRect().height);
-            batch.draw(o.getTexture(), o.getTopRect().x, o.getTopRect().y, o.getTopRect().width,
-                    o.getTopRect().height, 0, 0, 100, 720, false, true);
-        }
+        Obstacle.drawObstacles(batch, obstacleList);
 
         // Draw player character
         batch.draw(player.getTexture(), player.getPosition().x, player.getPosition().y);
@@ -140,6 +123,7 @@ public class Main extends ApplicationAdapter {
         if (isCollided) {
             font.draw(batch, "OBSTACLE HIT", SCREEN_WIDTH / 2, SCREEN_HEIGHT - 100);
         }
+
         batch.end();
     }
 
@@ -147,7 +131,7 @@ public class Main extends ApplicationAdapter {
 
         // Sets the speed (updates position on all elements, "movement")
         for (Obstacle o : obstacleList) {
-            o.setPosition(-speed);
+            o.move(-speed);
         }
 
         // Creates a new obstacle when the last obstacle on screen reaches below 700
