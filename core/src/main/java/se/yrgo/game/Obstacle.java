@@ -8,13 +8,16 @@ public class Obstacle {
     private Texture texture;
     private Rectangle bottomRect;
     private Rectangle topRect;
-    private int gap;
+    private Rectangle gapRect;
+
+    private boolean isScored;
 
     public Obstacle(Texture texture, int x, int y, int width, int height, int gap) {
         this.texture = texture;
-        this.gap = gap;
         bottomRect = new Rectangle(x, y, width, height);
         topRect = new Rectangle(x, y + height + gap, width, 720);
+        gapRect = new Rectangle(x, y + height, width, gap);
+        isScored = false;
     }
 
     public Texture getTexture() {
@@ -29,8 +32,21 @@ public class Obstacle {
         return topRect;
     }
 
+    public Rectangle getGapRect() {
+        return gapRect;
+    }
+
+    public void setIsScored(boolean isScored) {
+        this.isScored = isScored;
+    }
+
+    public boolean getIsScored() {
+        return isScored;
+    }
+
     public void setPosition(int speed) {
         bottomRect.x += speed;
         topRect.x += speed;
+        gapRect.x += speed;
     }
 }
