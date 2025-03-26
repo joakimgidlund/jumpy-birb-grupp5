@@ -97,12 +97,13 @@ public class Main extends ApplicationAdapter {
         yVelocity += gravity;  //Applies gravity
         y += yVelocity;   //Updates y position
 
+        //Update the birbs position with the new y value
         player.setPosition(0, (int) y);
 
-//        if(y < 0){        was supposed to prevent the birb from falling below ground level - not working
-//            y = 0;
-//            yVelocity = 0;
-//        }
+        if(y < 0){
+            y = 0;
+            yVelocity = 0;
+        }
     }
 
 
