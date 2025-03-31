@@ -1,6 +1,7 @@
 package se.yrgo.game;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.badlogic.gdx.ApplicationAdapter;
@@ -26,8 +27,13 @@ public class Main extends ApplicationAdapter {
     private static final int GAP = 250;
 
     private ArrayList<Obstacle> obstacleList;
+    private ArrayList<Texture> textureList;
     private SpriteBatch batch;
-    private Texture obs;
+    private Texture lappstiftet;
+    private Texture karlatornet;
+    private Texture lisebergstornet;
+    private Texture masthugg;
+    private Texture poseidon;
     private Texture bg;
     private Texture birb;
 
@@ -54,17 +60,14 @@ public class Main extends ApplicationAdapter {
         viewport = new FitViewport(SCREEN_WIDTH, SCREEN_HEIGHT);
         speed = 5;
 
-        batch = new SpriteBatch();
-        bg = new Texture("bg.png");
-        obs = new Texture("obstacle.png");
-        birb = new Texture("birb.png");
+        loadTextures();
 
         font = new BitmapFont();
 
-        Obstacle firstObstacle = new Obstacle(obs, 1380, 0, 100, 200, GAP);
+        
         player = new GameObject(birb, 50, 335, 50, 50, -2.5f);
         obstacleList = new ArrayList<>();
-        obstacleList.add(firstObstacle);
+       
 
         isCollided = false;
 
@@ -81,7 +84,10 @@ public class Main extends ApplicationAdapter {
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
 
         viewport.apply();
-
+        if (obstacleList.isEmpty()) {
+            Obstacle firstObstacle = new Obstacle(textureList.get(0), 1380, 0, 100, 200, GAP);
+            obstacleList.add(firstObstacle);
+        }
         if (!stopGame) {
             input();
             updateGameObjects();
@@ -162,7 +168,8 @@ public class Main extends ApplicationAdapter {
         // pixels.
         if (obstacleList.get(obstacleList.size() - 1).getBottomRect().x < 700) {
             int height = ThreadLocalRandom.current().nextInt(350) + 100;
-            obstacleList.add(new Obstacle(obs, 1280, 0, 100, height, GAP));
+            int texture = ThreadLocalRandom.current().nextInt(textureList.size());
+            obstacleList.add(new Obstacle(textureList.get(texture), 1280, 0, 100, height, GAP));
 
             // Print information about added obstacle
             // System.out.printf("New obstacle height: %d%nObstacleList index: %d%n",
@@ -209,7 +216,21 @@ public class Main extends ApplicationAdapter {
 
         // resets obstacles
         obstacleList.clear();
-        obstacleList.add(new Obstacle(obs, 1380, 0, 100, 200, GAP));
+       
+    }
+
+    private void loadTextures(){
+        batch = new SpriteBatch();
+        bg = new Texture("bg_blurred.png");
+        karlatornet = new Texture("karlatornet.png");
+        lappstiftet = new Texture("lappstiftet.png");
+        lisebergstornet = new Texture("lisebergstornet.png");
+        masthugg = new Texture("masthuggskyrkan.png");
+        poseidon = new Texture("poseidon.png");
+        birb = new Texture("doris.png");
+        textureList = new ArrayList<>();
+        Collections.addAll(textureList, karlatornet, lappstiftet, lisebergstornet, masthugg, poseidon);
+
     }
 
     @Override
@@ -217,7 +238,11 @@ public class Main extends ApplicationAdapter {
         batch.dispose();
         bg.dispose();
         font.dispose();
-        obs.dispose();
+        lappstiftet.dispose();
+        karlatornet.dispose();
+        lisebergstornet.dispose();
+        masthugg.dispose();
+        poseidon.dispose();
         birb.dispose();
     }
 }
