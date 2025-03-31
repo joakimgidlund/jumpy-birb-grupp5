@@ -39,6 +39,7 @@ public class Main extends ApplicationAdapter {
     private int score;
 
     private boolean isCollided; // Currently used for collision testing, might impact game flow later
+    private boolean stopGame;   // Stops the game if hit a obstacle
 
     private int speed;
     private float yVelocity = 0;
@@ -81,21 +82,34 @@ public class Main extends ApplicationAdapter {
 
         viewport.apply();
 
-        input();
-        updateGameObjects();
-        obstacleLogic();
+        if (!stopGame) {
+            input();
+            updateGameObjects();
+            obstacleLogic();
+    
+            collision();
+        }
 
-        collision();
 
         drawing();
     }
 
     public void input() {
 
+        // skips any further inputs if the game is over
+        if (stopGame) {
+            // Start a new game with "N" or mouse right-click. all other buttons cease to work
+            if (Gdx.input.isKeyJustPressed(Input.Keys.N)|| Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)){
+                newGame();
+            }
+            return;
+        }
+
         //Control the birb with SPACE key and mouse click
         if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)
             || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
-            || Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
+            //|| Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)
+            ) {
             player.setyVelocity(jumpStrength);
         }
         if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
@@ -120,8 +134,18 @@ public class Main extends ApplicationAdapter {
 
         // Draw a text with current score
         font.draw(batch, "Score: " + score, SCREEN_WIDTH / 2, SCREEN_HEIGHT - 50);
+
+        // When collision occurs: stop game
         if (isCollided) {
-            font.draw(batch, "OBSTACLE HIT", SCREEN_WIDTH / 2, SCREEN_HEIGHT - 100);
+            //font.draw(batch, "OBSTACLE HIT", SCREEN_WIDTH / 2, SCREEN_HEIGHT - 100);
+            stopGame = true;
+        }
+
+        //Game over screen
+        if(stopGame){
+            font.draw(batch, "GAME OVER", SCREEN_WIDTH / 2, SCREEN_HEIGHT /2);
+            font.draw(batch, "Your score is: " + score, SCREEN_WIDTH / 2, SCREEN_HEIGHT /2 - 50);
+            font.draw(batch, "Press N for new game", SCREEN_WIDTH / 2, SCREEN_HEIGHT /2 - 100);
         }
 
         batch.end();
@@ -169,6 +193,23 @@ public class Main extends ApplicationAdapter {
                 || player.getPosition().overlaps(firstObstacle.getTopRect())) {
             isCollided = true;
         }
+    }
+
+    // Start a new game
+    private void newGame(){
+        
+        // resets the flags
+        stopGame = false;
+        isCollided = false;
+        score = 0;
+
+        // reposition birb to initial position & values
+        player.setPosition(50, SCREEN_HEIGHT / 2);
+        player.setyVelocity(0);
+
+        // resets obstacles
+        obstacleList.clear();
+        obstacleList.add(new Obstacle(obs, 1380, 0, 100, 200, GAP));
     }
 
     @Override
