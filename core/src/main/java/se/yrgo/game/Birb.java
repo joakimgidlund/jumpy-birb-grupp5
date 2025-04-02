@@ -24,7 +24,7 @@ public class Birb extends Game {
         font = new BitmapFont();
         font.getData().setScale(2f);
 
-        this.setScreen(new GameScreen(this));
+        this.setScreen(new MainMenu(this));
     }
 
     public void render() {

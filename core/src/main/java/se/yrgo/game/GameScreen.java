@@ -103,7 +103,7 @@ public class GameScreen implements Screen {
             player.setyVelocity(jumpStrength);
         }
         if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            Gdx.app.exit();
+            game.setScreen(new MainMenu(game));
         }
 
     }
@@ -114,16 +114,16 @@ public class GameScreen implements Screen {
 
 
     private void drawing() {
-        batch.begin();
-        batch.draw(bg, 0, 0);
+        game.batch.begin();
+        game.batch.draw(bg, 0, 0);
 
-        Obstacle.drawObstacles(batch, obstacleList);
+        Obstacle.drawObstacles(game.batch, obstacleList);
 
         // Draw player character
-        batch.draw(player.getTexture(), player.getPosition().x, player.getPosition().y);
+        game.batch.draw(player.getTexture(), player.getPosition().x, player.getPosition().y);
 
         // Draw a text with current score
-        game.font.draw(batch, "Score: " + score, game.SCREEN_WIDTH / 2, game.SCREEN_HEIGHT - 50);
+        game.font.draw(game.batch, "Score: " + score, Birb.SCREEN_WIDTH / 2, Birb.SCREEN_HEIGHT - 50);
 
         // When collision occurs: stop game
         if (isCollided) {
@@ -133,12 +133,12 @@ public class GameScreen implements Screen {
 
         //Game over screen
         if(stopGame){
-            game.font.draw(batch, "GAME OVER", game.SCREEN_WIDTH / 2, game.SCREEN_HEIGHT /2);
-            game.font.draw(batch, "Your score is: " + score, game.SCREEN_WIDTH / 2, game.SCREEN_HEIGHT /2 - 50);
+            game.font.draw(game.batch, "GAME OVER", Birb.SCREEN_WIDTH / 2, Birb.SCREEN_HEIGHT /2);
+            game.font.draw(game.batch, "Your score is: " + score, Birb.SCREEN_WIDTH / 2, Birb.SCREEN_HEIGHT /2 - 50);
             //game.font.draw(batch, "Press N for new game", SCREEN_WIDTH / 2, SCREEN_HEIGHT /2 - 100);
         }
 
-        batch.end();
+        game.batch.end();
     }
 
     public void obstacleLogic() {
@@ -195,12 +195,11 @@ public class GameScreen implements Screen {
         score = 0;
 
         // reposition birb to initial position & values
-        player.setPosition(50, game.SCREEN_HEIGHT / 2);
+        player.setPosition(50, Birb.SCREEN_HEIGHT / 2);
         player.setyVelocity(0);
 
         // resets obstacles
-        obstacleList.clear();
-       
+        obstacleList.clear();  
     }
 
     private void loadTextures(){

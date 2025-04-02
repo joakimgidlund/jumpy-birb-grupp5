@@ -28,7 +28,12 @@ public class GameObject {
     }
 
     public void setPosition(int x, int y) {
-        position.y += y;
+        position.x = x;
+        position.y = y;
+    }
+
+    public void yMove(float yVelocity) {
+        position.y += yVelocity;
     }
 
     public void setyVelocity(float yVelocity) {
@@ -43,6 +48,6 @@ public class GameObject {
             yVelocity = gravity * 1.5f;
         }
         //Update the birbs position with the new y value
-        setPosition(0, (int) yVelocity);
+        yMove(yVelocity);
     }
 }
