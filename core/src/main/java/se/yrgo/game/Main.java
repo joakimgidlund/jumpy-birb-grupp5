@@ -4,10 +4,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.ThreadLocalRandom;
 
+import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input;
 
 /**
@@ -15,13 +20,15 @@ import com.badlogic.gdx.Input;
  * platforms.
  */
 
-public class GameScreen implements Screen {
-    final Birb game;
+public class Main extends ApplicationAdapter {
 
+    private static final int SCREEN_WIDTH = 1280;
+    private static final int SCREEN_HEIGHT = 720;
     private static final int GAP = 250;
 
     private ArrayList<Obstacle> obstacleList;
     private ArrayList<Texture> textureList;
+    private SpriteBatch batch;
     private Texture lappstiftet;
     private Texture karlatornet;
     private Texture lisebergstornet;
@@ -29,68 +36,80 @@ public class GameScreen implements Screen {
     private Texture poseidon;
     private Texture bg;
     private Texture birb;
-    private Texture animatedbirb;
+
+    private BitmapFont font;
+
+    private FitViewport viewport;
 
     private GameObject player;
     private int score;
-    private float stateTime;
 
     private boolean isCollided; // Currently used for collision testing, might impact game flow later
     private boolean stopGame;   // Stops the game if hit a obstacle
 
     private int speed;
-
+    private float yVelocity = 0;
     float gravity = -2.5f;
     float jumpStrength = 30;
 
-    public GameScreen(final Birb game) {
-        this.game = game;
+    @Override
+    public void create() {
+        Gdx.graphics.setWindowedMode(SCREEN_WIDTH, SCREEN_HEIGHT);
+        Gdx.graphics.setResizable(false);
+
+        viewport = new FitViewport(SCREEN_WIDTH, SCREEN_HEIGHT);
+        speed = 5;
 
         loadTextures();
 
-        speed = 5;
+        font = new BitmapFont();
 
-        player = new GameObject(animatedbirb, 50, 335, 38, 50, -2.5f);
+        
+        player = new GameObject(birb, 50, 335, 50, 50, -2.5f);
         obstacleList = new ArrayList<>();
+       
+
         isCollided = false;
+
         score = 0;
     }
 
     @Override
     public void resize(int width, int height) {
-        game.viewport.update(width, height, true);
+        viewport.update(width, height, true);
     }
 
     @Override
-    public void show() {
-        //insert music?
-    }
+    public void render() {
+        ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
 
-    @Override
-    public void render(float delta) {
-        game.viewport.apply();
-        if (stopGame) {
-            // Start a new game with "N" or mouse right-click. all other buttons cease to work
-            if (Gdx.input.isKeyJustPressed(Input.Keys.N)|| Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)){
-                newGame();
-            }
-        }
+        viewport.apply();
         if (obstacleList.isEmpty()) {
             Obstacle firstObstacle = new Obstacle(textureList.get(0), 1380, 0, 100, 200, GAP);
             obstacleList.add(firstObstacle);
         }
         if (!stopGame) {
-            ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
             input();
             updateGameObjects();
             obstacleLogic();
     
             collision();
         }
+
+
         drawing();
     }
 
     public void input() {
+
+        // skips any further inputs if the game is over
+        if (stopGame) {
+            // Start a new game with "N" or mouse right-click. all other buttons cease to work
+            if (Gdx.input.isKeyJustPressed(Input.Keys.N)|| Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)){
+                newGame();
+            }
+            return;
+        }
 
         //Control the birb with SPACE key and mouse click
         if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)
@@ -98,29 +117,29 @@ public class GameScreen implements Screen {
             //|| Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)
             ) {
             player.setyVelocity(jumpStrength);
-            player.setWingFlap(true);
-        } 
-        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            game.setScreen(new MainMenu(game));
         }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            Gdx.app.exit();
+        }
+
     }
 
     public void updateGameObjects() {
         player.movement();
-        player.updateAnimation(Gdx.graphics.getDeltaTime());
     }
 
-    private void drawing() {
-        game.batch.begin();
-        game.batch.draw(bg, 0, 0);
 
-        Obstacle.drawObstacles(game.batch, obstacleList);
+    private void drawing() {
+        batch.begin();
+        batch.draw(bg, 0, 0);
+
+        Obstacle.drawObstacles(batch, obstacleList);
 
         // Draw player character
-        game.batch.draw(player.getCurrentFrame(), player.getPosition().x, player.getPosition().y);
+        batch.draw(player.getTexture(), player.getPosition().x, player.getPosition().y);
 
         // Draw a text with current score
-        game.font.draw(game.batch, "Score: " + score, Birb.SCREEN_WIDTH / 2, Birb.SCREEN_HEIGHT - 50);
+        font.draw(batch, "Score: " + score, SCREEN_WIDTH / 2, SCREEN_HEIGHT - 50);
 
         // When collision occurs: stop game
         if (isCollided) {
@@ -130,12 +149,12 @@ public class GameScreen implements Screen {
 
         //Game over screen
         if(stopGame){
-            game.font.draw(game.batch, "GAME OVER", Birb.SCREEN_WIDTH / 2, Birb.SCREEN_HEIGHT /2);
-            game.font.draw(game.batch, "Your score is: " + score, Birb.SCREEN_WIDTH / 2, Birb.SCREEN_HEIGHT /2 - 50);
-            //game.font.draw(batch, "Press N for new game", SCREEN_WIDTH / 2, SCREEN_HEIGHT /2 - 100);
+            font.draw(batch, "GAME OVER", SCREEN_WIDTH / 2, SCREEN_HEIGHT /2);
+            font.draw(batch, "Your score is: " + score, SCREEN_WIDTH / 2, SCREEN_HEIGHT /2 - 50);
+            font.draw(batch, "Press N for new game", SCREEN_WIDTH / 2, SCREEN_HEIGHT /2 - 100);
         }
 
-        game.batch.end();
+        batch.end();
     }
 
     public void obstacleLogic() {
@@ -192,50 +211,38 @@ public class GameScreen implements Screen {
         score = 0;
 
         // reposition birb to initial position & values
-        player.setPosition(50, Birb.SCREEN_HEIGHT / 2);
+        player.setPosition(50, SCREEN_HEIGHT / 2);
         player.setyVelocity(0);
 
         // resets obstacles
-        obstacleList.clear();  
+        obstacleList.clear();
+       
     }
 
     private void loadTextures(){
-        bg = new Texture("softsunset_bg.png");
+        batch = new SpriteBatch();
+        bg = new Texture("bg_blurred.png");
         karlatornet = new Texture("karlatornet.png");
         lappstiftet = new Texture("lappstiftet.png");
         lisebergstornet = new Texture("lisebergstornet.png");
         masthugg = new Texture("masthuggskyrkan.png");
         poseidon = new Texture("poseidon.png");
         birb = new Texture("doris.png");
-        animatedbirb = new Texture("spritesheetbirb.png");
         textureList = new ArrayList<>();
         Collections.addAll(textureList, karlatornet, lappstiftet, lisebergstornet, masthugg, poseidon);
-    }
 
-    @Override
-    public void hide() {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void pause() {
-        // TODO Auto-generated method stub 
-    }
-
-    @Override
-    public void resume() {
-        // TODO Auto-generated method stub 
     }
 
     @Override
     public void dispose() {
+        batch.dispose();
         bg.dispose();
+        font.dispose();
         lappstiftet.dispose();
         karlatornet.dispose();
         lisebergstornet.dispose();
         masthugg.dispose();
         poseidon.dispose();
         birb.dispose();
-        animatedbirb.dispose();
     }
 }
