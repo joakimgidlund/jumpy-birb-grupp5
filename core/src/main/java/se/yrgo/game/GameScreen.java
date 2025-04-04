@@ -6,12 +6,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input;
 
 /**
@@ -26,7 +22,6 @@ public class GameScreen implements Screen {
 
     private ArrayList<Obstacle> obstacleList;
     private ArrayList<Texture> textureList;
-    private SpriteBatch batch;
     private Texture lappstiftet;
     private Texture karlatornet;
     private Texture lisebergstornet;
@@ -105,13 +100,11 @@ public class GameScreen implements Screen {
         if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             game.setScreen(new MainMenu(game));
         }
-
     }
 
     public void updateGameObjects() {
         player.movement();
     }
-
 
     private void drawing() {
         game.batch.begin();
@@ -203,7 +196,6 @@ public class GameScreen implements Screen {
     }
 
     private void loadTextures(){
-        batch = new SpriteBatch();
         bg = new Texture("bg_blurred.png");
         karlatornet = new Texture("karlatornet.png");
         lappstiftet = new Texture("lappstiftet.png");
@@ -213,25 +205,21 @@ public class GameScreen implements Screen {
         birb = new Texture("doris.png");
         textureList = new ArrayList<>();
         Collections.addAll(textureList, karlatornet, lappstiftet, lisebergstornet, masthugg, poseidon);
-
     }
 
     @Override
     public void hide() {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void pause() {
-        // TODO Auto-generated method stub
-        
+        // TODO Auto-generated method stub 
     }
 
     @Override
     public void resume() {
-        // TODO Auto-generated method stub
-        
+        // TODO Auto-generated method stub 
     }
 
     @Override
