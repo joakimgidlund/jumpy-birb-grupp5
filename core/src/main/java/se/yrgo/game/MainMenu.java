@@ -1,33 +1,42 @@
 package se.yrgo.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-public class MainMenu implements Screen{
+public class MainMenu implements Screen {
 
     Birb game;
     Stage stage;
-    TextureAtlas atlas;
-    Skin skin;
+
     Texture splash;
+    Texture background;
+    
+    Texture playUp;
+    Texture playDown;
+    Texture quitUp;
+    Texture quitDown;
 
     public MainMenu(Birb game) {
         this.game = game;
 
-        atlas = new TextureAtlas("uiskin.atlas");
-        skin = new Skin(Gdx.files.internal("uiskin.json"), atlas);
         splash = new Texture("doris.png");
+        background = new Texture("softsunset_bg.png");
+
+        playUp = new Texture("playup.png");
+        playDown = new Texture("playdown.png");
+        quitUp = new Texture("quitup.png");
+        quitDown = new Texture("quitdown.png");
+        
 
         stage = new Stage(game.viewport);
         Gdx.input.setInputProcessor(stage);
@@ -42,28 +51,32 @@ public class MainMenu implements Screen{
         table.setFillParent(true);
         table.top();
 
-        TextButton play = new TextButton("Play", skin);
-        TextButton quit = new TextButton("Quit", skin);
-        
-        play.addListener(new ChangeListener() {
+        Drawable playUpDraw = new TextureRegionDrawable(playUp);
+        Drawable playDownDraw = new TextureRegionDrawable(playDown);
+        Button playButton = new Button(playUpDraw, playDownDraw);
+
+        Drawable quitUpDraw = new TextureRegionDrawable(quitUp);
+        Drawable quitDownDraw = new TextureRegionDrawable(quitDown);
+        Button quitButton = new Button(quitUpDraw, quitDownDraw);
+
+        playButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 game.setScreen(new GameScreen(game));
             }
         });
 
-        quit.addListener(new ChangeListener() {
+        quitButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 Gdx.app.exit();
             }
         });
 
-        table.padTop(400);
-        table.add(play).height(100).width(200);
+        table.padTop(300);
+        table.add(playButton).height(100).width(200).padBottom(50);
         table.row();
-        table.add(quit).height(100).width(200);
-        table.row();
+        table.add(quitButton).height(100).width(200);
 
         stage.addActor(table);
     }
@@ -73,21 +86,12 @@ public class MainMenu implements Screen{
         ScreenUtils.clear(Color.BLACK);
 
         game.batch.begin();
-        // game.font.draw(game.batch, "Press N to start.", Birb.SCREEN_WIDTH / 2, Birb.SCREEN_HEIGHT / 2);
-        game.batch.draw(splash, game.SCREEN_WIDTH / 2 - 25, 600);
+        game.batch.draw(background, 0, 0);
+        game.batch.draw(splash, Birb.SCREEN_WIDTH / 2 - 25, 600);
         game.batch.end();
         
         stage.act();
         stage.draw();
-
-        // if (Gdx.input.isKeyJustPressed(Input.Keys.N) || Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
-        //     game.setScreen(new GameScreen(game));
-        //     dispose();
-        // }
-
-        // if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-        //     Gdx.app.exit();
-        // }
     }
 
     @Override
@@ -109,7 +113,11 @@ public class MainMenu implements Screen{
 
     @Override
     public void dispose() {
-        skin.dispose();
-        atlas.dispose();
+        background.dispose();
+        splash.dispose();
+        playDown.dispose();
+        playUp.dispose();
+        quitUp.dispose();
+        quitDown.dispose();
     }
 }
