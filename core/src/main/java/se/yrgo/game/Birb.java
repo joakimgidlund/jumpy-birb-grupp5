@@ -22,7 +22,7 @@ public class Birb extends Game {
 
         batch = new SpriteBatch();
         font = new BitmapFont();
-        font.getData().setScale(2f);
+        font.getData().setScale(1f);
 
         this.setScreen(new MainMenu(this));
     }

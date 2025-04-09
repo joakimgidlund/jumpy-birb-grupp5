@@ -5,7 +5,14 @@ import java.util.Collections;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input;
@@ -31,12 +38,14 @@ public class GameScreen implements Screen {
     private Texture birb;
     private Texture animatedbirb;
 
+    private Stage stage;
+    Table table;
+
     private GameObject player;
     private int score;
     private float stateTime;
 
-    private boolean isCollided; // Currently used for collision testing, might impact game flow later
-    private boolean stopGame;   // Stops the game if hit a obstacle
+    private boolean stopGame; // Stops the game if hit a obstacle
 
     private int speed;
 
@@ -46,13 +55,14 @@ public class GameScreen implements Screen {
     public GameScreen(final Birb game) {
         this.game = game;
 
+        stage = new Stage(game.viewport);
+
         loadTextures();
 
         speed = 5;
 
         player = new GameObject(animatedbirb, 50, 335, 38, 50, -2.5f);
         obstacleList = new ArrayList<>();
-        isCollided = false;
         score = 0;
     }
 
@@ -63,49 +73,52 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-        //insert music?
+        // insert music?
     }
 
     @Override
     public void render(float delta) {
         game.viewport.apply();
-        if (stopGame) {
-            // Start a new game with "N" or mouse right-click. all other buttons cease to work
-            if (Gdx.input.isKeyJustPressed(Input.Keys.N)|| Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)){
-                newGame();
-            }
-        }
+
         if (obstacleList.isEmpty()) {
             Obstacle firstObstacle = new Obstacle(textureList.get(0), 1380, 0, 100, 200, GAP);
             obstacleList.add(firstObstacle);
         }
+
         if (!stopGame) {
             ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
-            input();
             updateGameObjects();
             obstacleLogic();
-    
             collision();
         }
+
+        input();
+
         drawing();
     }
 
-    public void input() {
+    private void input() {
+        if (stopGame
+                && (Gdx.input.isKeyJustPressed(Input.Keys.N) 
+                || Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT))) {
+            // Start a new game with "N" or mouse right-click. all other buttons cease to
+            // work
+            newGame();
+        }
 
-        //Control the birb with SPACE key and mouse click
-        if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)
-            || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
-            //|| Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)
-            ) {
+        // Control the birb with SPACE key and mouse click
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)
+                || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             player.setyVelocity(jumpStrength);
             player.setWingFlap(true);
-        } 
-        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             game.setScreen(new MainMenu(game));
         }
     }
 
-    public void updateGameObjects() {
+    private void updateGameObjects() {
         player.movement();
         player.updateAnimation(Gdx.graphics.getDeltaTime());
     }
@@ -120,25 +133,47 @@ public class GameScreen implements Screen {
         game.batch.draw(player.getCurrentFrame(), player.getPosition().x, player.getPosition().y);
 
         // Draw a text with current score
-        game.font.draw(game.batch, "Score: " + score, Birb.SCREEN_WIDTH / 2, Birb.SCREEN_HEIGHT - 50);
+        game.font.draw(game.batch, "Score: " + score, Birb.SCREEN_WIDTH / 2 - 30, Birb.SCREEN_HEIGHT - 50);
 
-        // When collision occurs: stop game
-        if (isCollided) {
-            //font.draw(batch, "OBSTACLE HIT", SCREEN_WIDTH / 2, SCREEN_HEIGHT - 100);
-            stopGame = true;
+        // Game over screen
+        if (stopGame) {
+            drawGameOver();
         }
-
-        //Game over screen
-        if(stopGame){
-            game.font.draw(game.batch, "GAME OVER", Birb.SCREEN_WIDTH / 2, Birb.SCREEN_HEIGHT /2);
-            game.font.draw(game.batch, "Your score is: " + score, Birb.SCREEN_WIDTH / 2, Birb.SCREEN_HEIGHT /2 - 50);
-            //game.font.draw(batch, "Press N for new game", SCREEN_WIDTH / 2, SCREEN_HEIGHT /2 - 100);
+        else {
+            game.batch.end();
         }
-
-        game.batch.end();
     }
 
-    public void obstacleLogic() {
+    private void drawGameOver() {
+        table = new Table();
+        LabelStyle labelStyle = new LabelStyle(game.font, new Color(255, 255, 255, 1f));
+        Label gameOverLabel = new Label("GAME OVER", labelStyle);
+        Label scoreLabel = new Label("Your score was: " + score, labelStyle);
+        Label newGameLabel = new Label("Press N to start a new game.\nPress ESC to exit to main menu.", labelStyle);
+        
+        table.setFillParent(true);
+        table.top();
+
+        Color c = game.batch.getColor();
+        game.batch.setColor(c.r, c.g, c.g, 0.5f);
+        game.batch.draw(new Texture("tint.png"), 0, 0);
+        game.batch.setColor(c.r, c.g, c.g, 1f);
+        game.batch.end();
+
+        table.padTop(50);
+        table.add(new Image(new Texture("deathcrop.png")));
+        table.row();
+        table.add(gameOverLabel);
+        table.row();
+        table.add(scoreLabel);
+        table.row();
+        table.add(newGameLabel).padTop(200);
+
+        stage.addActor(table);
+        stage.draw();
+    }
+
+    private void obstacleLogic() {
 
         // Sets the speed (updates position on all elements, "movement")
         for (Obstacle o : obstacleList) {
@@ -151,21 +186,19 @@ public class GameScreen implements Screen {
             int height = ThreadLocalRandom.current().nextInt(350) + 100;
             int texture = ThreadLocalRandom.current().nextInt(textureList.size());
             obstacleList.add(new Obstacle(textureList.get(texture), 1280, 0, 100, height, GAP));
-
-            // Print information about added obstacle
-            // System.out.printf("New obstacle height: %d%nObstacleList index: %d%n",
-            // height, obstacleList.size() - 1);
         }
 
         // Removes the first obstacle that goes off-screen.
         // Currently also resets collision flag for testing
         if (obstacleList.get(0).getBottomRect().x < -100) {
             obstacleList.remove(0);
-            isCollided = false;
         }
     }
 
     public void collision() {
+        //Saving player position for cleaner if-case
+        Rectangle playerPos = player.getPosition();
+
         // Fetches the first obstacle, since it's the only one we can collide with
         Obstacle firstObstacle = obstacleList.get(0);
 
@@ -176,19 +209,22 @@ public class GameScreen implements Screen {
             score++;
         }
 
-        // This checks collision with obstacles, will end the game in the future
+        // This checks collision with obstacles (and stage bounds), ends the round
         if (player.getPosition().overlaps(firstObstacle.getBottomRect())
-                || player.getPosition().overlaps(firstObstacle.getTopRect())) {
-            isCollided = true;
+                || player.getPosition().overlaps(firstObstacle.getTopRect())
+                || (playerPos.y < -20 || playerPos.y > 725)) {
+            stopGame = true;
         }
     }
 
     // Start a new game
-    private void newGame(){
-        
+    private void newGame() {
+
+        table.clear();
+        stage.clear();
+
         // resets the flags
         stopGame = false;
-        isCollided = false;
         score = 0;
 
         // reposition birb to initial position & values
@@ -196,10 +232,10 @@ public class GameScreen implements Screen {
         player.setyVelocity(0);
 
         // resets obstacles
-        obstacleList.clear();  
+        obstacleList.clear();
     }
 
-    private void loadTextures(){
+    private void loadTextures() {
         bg = new Texture("softsunset_bg.png");
         karlatornet = new Texture("karlatornet.png");
         lappstiftet = new Texture("lappstiftet.png");
@@ -214,17 +250,14 @@ public class GameScreen implements Screen {
 
     @Override
     public void hide() {
-        // TODO Auto-generated method stub
     }
 
     @Override
     public void pause() {
-        // TODO Auto-generated method stub 
     }
 
     @Override
     public void resume() {
-        // TODO Auto-generated method stub 
     }
 
     @Override
