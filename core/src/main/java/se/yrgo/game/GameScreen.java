@@ -124,7 +124,7 @@ public class GameScreen implements Screen {
 
     private void input() {
         if (stopGame
-                && (Gdx.input.isKeyJustPressed(Input.Keys.N)
+                && (Gdx.input.isKeyJustPressed(Input.Keys.N) 
                 || Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT))) {
             // Start a new game with "N" or mouse right-click. all other buttons cease to
             // work
