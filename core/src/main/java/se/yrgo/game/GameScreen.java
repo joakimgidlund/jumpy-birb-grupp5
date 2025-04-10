@@ -132,8 +132,8 @@ public class GameScreen implements Screen {
         }
 
         // Control the birb with SPACE key and mouse click
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)
-                || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+        if ((Gdx.input.isKeyJustPressed(Input.Keys.SPACE)
+                || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) && !stopGame) {
             player.setyVelocity(jumpStrength);
             player.setWingFlap(true);
             sound.play(1.0f);
