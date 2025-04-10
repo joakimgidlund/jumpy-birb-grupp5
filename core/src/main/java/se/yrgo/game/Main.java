@@ -14,6 +14,8 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Preferences;
+
 
 /**
  * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all
@@ -51,6 +53,8 @@ public class Main extends ApplicationAdapter {
     private float yVelocity = 0;
     float gravity = -2.5f;
     float jumpStrength = 30;
+    private Preferences prefs;
+    private int highScore;
 
     @Override
     public void create() {
@@ -64,19 +68,37 @@ public class Main extends ApplicationAdapter {
 
         font = new BitmapFont();
 
-        
+
         player = new GameObject(birb, 50, 335, 50, 50, -2.5f);
         obstacleList = new ArrayList<>();
-       
+
 
         isCollided = false;
 
         score = 0;
+
+        prefs = Gdx.app.getPreferences("HighScoreDataFile");
+        highScore = prefs.getInteger("highscore", 0); //default score if no score yet
+        prefs.flush();
+
+        System.out.println("Highscore from prefs: " + highScore); //print out to see if its working
     }
 
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height, true);
+    }
+
+//    public int getHighScore() { //Maybe not needed?
+//        return highScore;
+//    }
+
+    public void setHighScore(int score) {
+        prefs = Gdx.app.getPreferences("HighScoreDataFile"); //HighScore is being saved in this file.
+        prefs.putInteger("highscore", score);
+        highScore = score;
+        prefs.flush();
+
     }
 
     @Override
@@ -92,12 +114,15 @@ public class Main extends ApplicationAdapter {
             input();
             updateGameObjects();
             obstacleLogic();
-    
+
             collision();
         }
-
+        if(stopGame && score > highScore) {  //Sets new high score if the new score is higher
+            setHighScore(score);
+        }
 
         drawing();
+
     }
 
     public void input() {
@@ -149,9 +174,10 @@ public class Main extends ApplicationAdapter {
 
         //Game over screen
         if(stopGame){
-            font.draw(batch, "GAME OVER", SCREEN_WIDTH / 2, SCREEN_HEIGHT /2);
-            font.draw(batch, "Your score is: " + score, SCREEN_WIDTH / 2, SCREEN_HEIGHT /2 - 50);
-            font.draw(batch, "Press N for new game", SCREEN_WIDTH / 2, SCREEN_HEIGHT /2 - 100);
+             font.draw(batch, "GAME OVER", SCREEN_WIDTH / 2, SCREEN_HEIGHT /2 + 100);
+             font.draw(batch, "Your score is: " + score, SCREEN_WIDTH / 2, SCREEN_HEIGHT /2 + 50);
+             font.draw(batch, "Press N for new game", SCREEN_WIDTH / 2, SCREEN_HEIGHT /2);
+            font.draw(batch, "The highscore is: " + highScore, SCREEN_WIDTH / 2, SCREEN_HEIGHT /2 - 50);
         }
 
         batch.end();
@@ -204,7 +230,7 @@ public class Main extends ApplicationAdapter {
 
     // Start a new game
     private void newGame(){
-        
+
         // resets the flags
         stopGame = false;
         isCollided = false;
@@ -216,8 +242,9 @@ public class Main extends ApplicationAdapter {
 
         // resets obstacles
         obstacleList.clear();
-       
+
     }
+
 
     private void loadTextures(){
         batch = new SpriteBatch();
