@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.Preferences;
 
 /**
@@ -46,6 +47,9 @@ public class GameScreen implements Screen {
     private int score;
     private float stateTime;
 
+    private Sound sound;
+
+
     private boolean stopGame; // Stops the game if hit a obstacle
 
     private int speed;
@@ -68,6 +72,7 @@ public class GameScreen implements Screen {
         player = new GameObject(animatedbirb, 50, 335, 38, 50, -2.5f);
         obstacleList = new ArrayList<>();
         score = 0;
+        sound = Gdx.audio.newSound(Gdx.files.internal("Seagull.mp3"));
 
         prefs = Gdx.app.getPreferences("HighScoreDataFile");
         highScore = prefs.getInteger("highscore");
@@ -131,6 +136,7 @@ public class GameScreen implements Screen {
                 || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             player.setyVelocity(jumpStrength);
             player.setWingFlap(true);
+            sound.play(1.0f);
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
