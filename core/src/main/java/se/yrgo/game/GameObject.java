@@ -74,7 +74,7 @@ public class GameObject {
             yVelocity += gravity;  //Applies gravity
         }
         else {
-            yVelocity = gravity * 1.5f;
+            yVelocity += gravity * 0.1f;
         }
         //Update the birbs position with the new y value
         yMove(yVelocity);

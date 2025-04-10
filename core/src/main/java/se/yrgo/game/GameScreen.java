@@ -50,8 +50,7 @@ public class GameScreen implements Screen {
 
     private int speed;
 
-    float gravity = -2.5f;
-    float jumpStrength = 30;
+    float jumpStrength = 25;
 
     private Preferences prefs;
     private int highScore;
@@ -70,9 +69,9 @@ public class GameScreen implements Screen {
         obstacleList = new ArrayList<>();
         score = 0;
 
-        highScoreString = "Your high score is " + score;
         prefs = Gdx.app.getPreferences("HighScoreDataFile");
-        highScore = prefs.getInteger("highscore", 0); //default score if no score yet
+        highScore = prefs.getInteger("highscore");
+        highScoreString = "Your high score is: " + highScore;
         prefs.flush();
     }
 
@@ -90,7 +89,7 @@ public class GameScreen implements Screen {
         prefs = Gdx.app.getPreferences("HighScoreDataFile"); //HighScore is being saved in this file.
         prefs.putInteger("highscore", score);
         highScore = score;
-        highScoreString = "New high score: " + score + "!!!!!!";
+        highScoreString = "New high score: " + highScore + "!!!!!!";
         prefs.flush();
     }
 
@@ -244,7 +243,7 @@ public class GameScreen implements Screen {
     // Start a new game
     private void newGame() {
 
-        highScoreString = "Your current highscore score is: " + score;
+        highScoreString = "Your highscore score is: " + highScore;
 
         table.clear();
         stage.clear();
