@@ -98,7 +98,6 @@ public class Main extends ApplicationAdapter {
         prefs.putInteger("highscore", score);
         highScore = score;
         prefs.flush();
-
     }
 
     @Override
