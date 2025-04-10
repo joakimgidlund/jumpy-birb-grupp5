@@ -30,12 +30,12 @@ public class MainMenu implements Screen {
         this.game = game;
 
         splash = new Texture("doris.png");
-        background = new Texture("softsunset_bg.png");
+        background = new Texture("start_menu.png");
 
-        playUp = new Texture("playup.png");
-        playDown = new Texture("playdown.png");
-        quitUp = new Texture("quitup.png");
-        quitDown = new Texture("quitdown.png");
+        playUp = new Texture("play_up.png");
+        playDown = new Texture("play_down.png");
+        quitUp = new Texture("quit_up.png");
+        quitDown = new Texture("quit_down.png");
         
 
         stage = new Stage(game.viewport);
