@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Preferences;
 
 /**
  * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all
@@ -51,6 +52,9 @@ public class GameScreen implements Screen {
 
     float gravity = -2.5f;
     float jumpStrength = 30;
+    private Preferences prefs;
+    private int highScore;
+    private String highScoreString;
 
     public GameScreen(final Birb game) {
         this.game = game;
@@ -64,6 +68,11 @@ public class GameScreen implements Screen {
         player = new GameObject(animatedbirb, 50, 335, 38, 50, -2.5f);
         obstacleList = new ArrayList<>();
         score = 0;
+
+        highScoreString = "Your high score is " + score;
+        prefs = Gdx.app.getPreferences("HighScoreDataFile");
+        highScore = prefs.getInteger("highscore", 0); //default score if no score yet
+        prefs.flush();
     }
 
     @Override
@@ -74,6 +83,14 @@ public class GameScreen implements Screen {
     @Override
     public void show() {
         // insert music?
+    }
+
+    public void setHighScore(int score) {
+        prefs = Gdx.app.getPreferences("HighScoreDataFile"); //HighScore is being saved in this file.
+        prefs.putInteger("highscore", score);
+        highScore = score;
+        highScoreString = "New high score: " + score;
+        prefs.flush();
     }
 
     @Override
@@ -91,6 +108,9 @@ public class GameScreen implements Screen {
             obstacleLogic();
             collision();
         }
+        if(stopGame && score > highScore) {  //Sets new high score if the new score is higher
+            setHighScore(score);
+        }
 
         input();
 
@@ -99,7 +119,7 @@ public class GameScreen implements Screen {
 
     private void input() {
         if (stopGame
-                && (Gdx.input.isKeyJustPressed(Input.Keys.N) 
+                && (Gdx.input.isKeyJustPressed(Input.Keys.N)
                 || Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT))) {
             // Start a new game with "N" or mouse right-click. all other buttons cease to
             // work
@@ -150,7 +170,9 @@ public class GameScreen implements Screen {
         Label gameOverLabel = new Label("GAME OVER", labelStyle);
         Label scoreLabel = new Label("Your score was: " + score, labelStyle);
         Label newGameLabel = new Label("Press N to start a new game.\nPress ESC to exit to main menu.", labelStyle);
-        
+        Label highScoreLabel = new Label(highScoreString, labelStyle);
+        highScoreString = "Your score is: " + score;
+
         table.setFillParent(true);
         table.top();
 
@@ -166,6 +188,8 @@ public class GameScreen implements Screen {
         table.add(gameOverLabel);
         table.row();
         table.add(scoreLabel);
+        table.row();
+        table.add(highScoreLabel);
         table.row();
         table.add(newGameLabel).padTop(200);
 
