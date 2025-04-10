@@ -52,6 +52,7 @@ public class GameScreen implements Screen {
 
     float gravity = -2.5f;
     float jumpStrength = 30;
+
     private Preferences prefs;
     private int highScore;
     private String highScoreString;
@@ -89,7 +90,7 @@ public class GameScreen implements Screen {
         prefs = Gdx.app.getPreferences("HighScoreDataFile"); //HighScore is being saved in this file.
         prefs.putInteger("highscore", score);
         highScore = score;
-        highScoreString = "New high score: " + score;
+        highScoreString = "New high score: " + score + "!!!!!!";
         prefs.flush();
     }
 
@@ -171,7 +172,6 @@ public class GameScreen implements Screen {
         Label scoreLabel = new Label("Your score was: " + score, labelStyle);
         Label newGameLabel = new Label("Press N to start a new game.\nPress ESC to exit to main menu.", labelStyle);
         Label highScoreLabel = new Label(highScoreString, labelStyle);
-        highScoreString = "Your score is: " + score;
 
         table.setFillParent(true);
         table.top();
@@ -243,6 +243,8 @@ public class GameScreen implements Screen {
 
     // Start a new game
     private void newGame() {
+
+        highScoreString = "Your current highscore score is: " + score;
 
         table.clear();
         stage.clear();
