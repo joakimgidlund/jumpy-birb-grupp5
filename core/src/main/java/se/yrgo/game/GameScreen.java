@@ -49,7 +49,6 @@ public class GameScreen implements Screen {
 
     private Sound sound;
 
-
     private boolean stopGame; // Stops the game if hit a obstacle
 
     private int speed;
@@ -91,7 +90,7 @@ public class GameScreen implements Screen {
     }
 
     public void setHighScore(int score) {
-        prefs = Gdx.app.getPreferences("HighScoreDataFile"); //HighScore is being saved in this file.
+        prefs = Gdx.app.getPreferences("HighScoreDataFile"); // HighScore is being saved in this file.
         prefs.putInteger("highscore", score);
         highScore = score;
         highScoreString = "New high score: " + highScore + "!!!!!!";
@@ -113,7 +112,7 @@ public class GameScreen implements Screen {
             obstacleLogic();
             collision();
         }
-        if(stopGame && score > highScore) {  //Sets new high score if the new score is higher
+        if (stopGame && score > highScore) { // Sets new high score if the new score is higher
             setHighScore(score);
         }
 
@@ -124,8 +123,7 @@ public class GameScreen implements Screen {
 
     private void input() {
         if (stopGame
-                && (Gdx.input.isKeyJustPressed(Input.Keys.N) 
-                || Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT))) {
+                && Gdx.input.isKeyJustPressed(Input.Keys.N)) {
             // Start a new game with "N" or mouse right-click. all other buttons cease to
             // work
             newGame();
@@ -164,8 +162,7 @@ public class GameScreen implements Screen {
         // Game over screen
         if (stopGame) {
             drawGameOver();
-        }
-        else {
+        } else {
             game.batch.end();
         }
     }
@@ -225,7 +222,7 @@ public class GameScreen implements Screen {
     }
 
     public void collision() {
-        //Saving player position for cleaner if-case
+        // Saving player position for cleaner if-case
         Rectangle playerPos = player.getPosition();
 
         // Fetches the first obstacle, since it's the only one we can collide with
