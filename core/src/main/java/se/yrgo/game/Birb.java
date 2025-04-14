@@ -18,11 +18,13 @@ public class Birb extends Game {
     public void create() {
         Gdx.graphics.setWindowedMode(SCREEN_WIDTH, SCREEN_HEIGHT);
         Gdx.graphics.setResizable(false);
+        //Sets the FPS to 60 locked
+        Gdx.graphics.setForegroundFPS(60);
         viewport = new FitViewport(SCREEN_WIDTH, SCREEN_HEIGHT);
 
         batch = new SpriteBatch();
         font = new BitmapFont();
-        font.getData().setScale(2f);
+        font.getData().setScale(1f);
 
         this.setScreen(new MainMenu(this));
     }
