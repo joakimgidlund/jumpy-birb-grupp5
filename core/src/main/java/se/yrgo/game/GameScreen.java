@@ -27,8 +27,6 @@ import com.badlogic.gdx.Preferences;
 public class GameScreen implements Screen {
     final Birb game;
 
-    private static final int GAP = 250;
-
     private ArrayList<Obstacle> obstacleList;
     private ArrayList<Texture> textureList;
     private Texture lappstiftet;
@@ -49,10 +47,7 @@ public class GameScreen implements Screen {
 
     private Sound sound;
 
-
     private boolean stopGame; // Stops the game if hit a obstacle
-
-    private int speed;
 
     float jumpStrength = 25;
 
@@ -60,14 +55,15 @@ public class GameScreen implements Screen {
     private int highScore;
     private String highScoreString;
 
-    public GameScreen(final Birb game) {
+    Difficulty difficulty;
+
+    public GameScreen(final Birb game, Difficulty difficulty) {
         this.game = game;
 
         stage = new Stage(game.viewport);
+        this.difficulty = difficulty;
 
         loadTextures();
-
-        speed = 5;
 
         player = new GameObject(animatedbirb, 50, 335, 38, 50, -2.5f);
         obstacleList = new ArrayList<>();
@@ -91,7 +87,7 @@ public class GameScreen implements Screen {
     }
 
     public void setHighScore(int score) {
-        prefs = Gdx.app.getPreferences("HighScoreDataFile"); //HighScore is being saved in this file.
+        prefs = Gdx.app.getPreferences("HighScoreDataFile"); // HighScore is being saved in this file.
         prefs.putInteger("highscore", score);
         highScore = score;
         highScoreString = "New high score: " + highScore + "!!!!!!";
@@ -103,7 +99,7 @@ public class GameScreen implements Screen {
         game.viewport.apply();
 
         if (obstacleList.isEmpty()) {
-            Obstacle firstObstacle = new Obstacle(textureList.get(0), 1380, 0, 100, 200, GAP);
+            Obstacle firstObstacle = new Obstacle(textureList.get(0), 1380, 0, 100, 200, difficulty.getGap());
             obstacleList.add(firstObstacle);
         }
 
@@ -113,7 +109,7 @@ public class GameScreen implements Screen {
             obstacleLogic();
             collision();
         }
-        if(stopGame && score > highScore) {  //Sets new high score if the new score is higher
+        if (stopGame && score > highScore) { // Sets new high score if the new score is higher
             setHighScore(score);
         }
 
@@ -124,8 +120,7 @@ public class GameScreen implements Screen {
 
     private void input() {
         if (stopGame
-                && (Gdx.input.isKeyJustPressed(Input.Keys.N) 
-                || Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT))) {
+                && Gdx.input.isKeyJustPressed(Input.Keys.N)) {
             // Start a new game with "N" or mouse right-click. all other buttons cease to
             // work
             newGame();
@@ -164,8 +159,7 @@ public class GameScreen implements Screen {
         // Game over screen
         if (stopGame) {
             drawGameOver();
-        }
-        else {
+        } else {
             game.batch.end();
         }
     }
@@ -206,7 +200,7 @@ public class GameScreen implements Screen {
 
         // Sets the speed (updates position on all elements, "movement")
         for (Obstacle o : obstacleList) {
-            o.move(-speed);
+            o.move(difficulty.getSpeed());
         }
 
         // Creates a new obstacle when the last obstacle on screen reaches below 700
@@ -214,7 +208,7 @@ public class GameScreen implements Screen {
         if (obstacleList.get(obstacleList.size() - 1).getBottomRect().x < 700) {
             int height = ThreadLocalRandom.current().nextInt(350) + 100;
             int texture = ThreadLocalRandom.current().nextInt(textureList.size());
-            obstacleList.add(new Obstacle(textureList.get(texture), 1280, 0, 100, height, GAP));
+            obstacleList.add(new Obstacle(textureList.get(texture), 1280, 0, 100, height, difficulty.getGap()));
         }
 
         // Removes the first obstacle that goes off-screen.
@@ -225,7 +219,7 @@ public class GameScreen implements Screen {
     }
 
     public void collision() {
-        //Saving player position for cleaner if-case
+        // Saving player position for cleaner if-case
         Rectangle playerPos = player.getPosition();
 
         // Fetches the first obstacle, since it's the only one we can collide with

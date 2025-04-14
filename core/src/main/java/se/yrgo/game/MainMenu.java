@@ -13,6 +13,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 
+import se.yrgo.game.Difficulty.Diff;
+
 public class MainMenu implements Screen {
 
     Birb game;
@@ -26,8 +28,12 @@ public class MainMenu implements Screen {
     Texture quitUp;
     Texture quitDown;
 
+    Difficulty difficultyLevel;
+
     public MainMenu(Birb game) {
         this.game = game;
+
+        difficultyLevel = new Difficulty(Diff.MEDIUM);
 
         splash = new Texture("doris.png");
         background = new Texture("start_menu.png");
@@ -62,7 +68,7 @@ public class MainMenu implements Screen {
         playButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                game.setScreen(new GameScreen(game));
+                game.setScreen(new GameScreen(game, difficultyLevel));
             }
         });
 
