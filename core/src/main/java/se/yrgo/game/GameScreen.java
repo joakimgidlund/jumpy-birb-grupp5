@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.Preferences;
 
@@ -70,6 +71,8 @@ public class GameScreen implements Screen {
         score = 0;
         sound = Gdx.audio.newSound(Gdx.files.internal("Seagull.mp3"));
 
+        Gdx.input.setInputProcessor(new InputMultiplexer());
+
         prefs = Gdx.app.getPreferences("HighScoreDataFile");
         highScore = prefs.getInteger("highscore");
         highScoreString = "Your high score is: " + highScore;
@@ -119,13 +122,6 @@ public class GameScreen implements Screen {
     }
 
     private void input() {
-        if (stopGame
-                && Gdx.input.isKeyJustPressed(Input.Keys.N)) {
-            // Start a new game with "N" or mouse right-click. all other buttons cease to
-            // work
-            newGame();
-        }
-
         // Control the birb with SPACE key and mouse click
         if ((Gdx.input.isKeyJustPressed(Input.Keys.SPACE)
                 || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) && !stopGame) {
@@ -136,6 +132,13 @@ public class GameScreen implements Screen {
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             game.setScreen(new MainMenu(game));
+        }
+
+        if (stopGame
+                && Gdx.input.isKeyJustPressed(Input.Keys.N)) {
+            // Start a new game with "N" or mouse right-click. all other buttons cease to
+            // work
+            newGame();
         }
     }
 
