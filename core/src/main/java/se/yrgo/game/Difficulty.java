@@ -52,4 +52,9 @@ public class Difficulty {
     public int getGap() {
         return gap;
     }
+
+    @Override
+    public String toString() {
+        return difficulty.name();
+    }
 }

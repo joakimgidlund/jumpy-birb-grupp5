@@ -43,7 +43,6 @@ public class GameScreen implements Screen {
 
     private GameObject player;
     private int score;
-    private float stateTime;
 
     private Sound sound;
 
