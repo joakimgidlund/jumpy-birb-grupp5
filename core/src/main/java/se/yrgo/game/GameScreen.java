@@ -27,8 +27,6 @@ import com.badlogic.gdx.Preferences;
 public class GameScreen implements Screen {
     final Birb game;
 
-    private static final int GAP = 250;
-
     private ArrayList<Obstacle> obstacleList;
     private ArrayList<Texture> textureList;
     private Texture lappstiftet;
@@ -51,22 +49,21 @@ public class GameScreen implements Screen {
 
     private boolean stopGame; // Stops the game if hit a obstacle
 
-    private int speed;
-
     float jumpStrength = 25;
 
     private Preferences prefs;
     private int highScore;
     private String highScoreString;
 
-    public GameScreen(final Birb game) {
+    Difficulty difficulty;
+
+    public GameScreen(final Birb game, Difficulty difficulty) {
         this.game = game;
 
         stage = new Stage(game.viewport);
+        this.difficulty = difficulty;
 
         loadTextures();
-
-        speed = 5;
 
         player = new GameObject(animatedbirb, 50, 335, 38, 50, -2.5f);
         obstacleList = new ArrayList<>();
@@ -102,7 +99,7 @@ public class GameScreen implements Screen {
         game.viewport.apply();
 
         if (obstacleList.isEmpty()) {
-            Obstacle firstObstacle = new Obstacle(textureList.get(0), 1380, 0, 100, 200, GAP);
+            Obstacle firstObstacle = new Obstacle(textureList.get(0), 1380, 0, 100, 200, difficulty.getGap());
             obstacleList.add(firstObstacle);
         }
 
@@ -203,7 +200,7 @@ public class GameScreen implements Screen {
 
         // Sets the speed (updates position on all elements, "movement")
         for (Obstacle o : obstacleList) {
-            o.move(-speed);
+            o.move(difficulty.getSpeed());
         }
 
         // Creates a new obstacle when the last obstacle on screen reaches below 700
@@ -211,7 +208,7 @@ public class GameScreen implements Screen {
         if (obstacleList.get(obstacleList.size() - 1).getBottomRect().x < 700) {
             int height = ThreadLocalRandom.current().nextInt(350) + 100;
             int texture = ThreadLocalRandom.current().nextInt(textureList.size());
-            obstacleList.add(new Obstacle(textureList.get(texture), 1280, 0, 100, height, GAP));
+            obstacleList.add(new Obstacle(textureList.get(texture), 1280, 0, 100, height, difficulty.getGap()));
         }
 
         // Removes the first obstacle that goes off-screen.
