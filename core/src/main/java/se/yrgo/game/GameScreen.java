@@ -73,8 +73,9 @@ public class GameScreen implements Screen {
         Gdx.input.setInputProcessor(new InputMultiplexer());
 
         prefs = Gdx.app.getPreferences("HighScoreDataFile");
-        highScore = prefs.getInteger("highscore");
-        highScoreString = "Your high score is: " + highScore;
+        String key = "highscore_" + difficulty.getDifficulty().name();
+        highScore = prefs.getInteger(key, 0); //highScore is 0 if not set.
+        highScoreString = "Your high score for " + difficulty.getDifficulty().name() + " is: " + highScore;
         prefs.flush();
     }
 
@@ -90,11 +91,13 @@ public class GameScreen implements Screen {
 
     public void setHighScore(int score) {
         prefs = Gdx.app.getPreferences("HighScoreDataFile"); // HighScore is being saved in this file.
-        prefs.putInteger("highscore", score);
+        String key = "highscore_" + difficulty.getDifficulty().name(); //sets e.g highscore_EASY
+        prefs.putInteger(key, score);
         highScore = score;
-        highScoreString = "New high score: " + highScore + "!!!!!!";
+        highScoreString = "New high score for level " +difficulty.getDifficulty().name() + " is: " + highScore + "!!!";
         prefs.flush();
     }
+
 
     @Override
     public void render(float delta) {
@@ -245,7 +248,7 @@ public class GameScreen implements Screen {
     // Start a new game
     private void newGame() {
 
-        highScoreString = "Your highscore score is: " + highScore;
+        highScoreString = "Your highscore score for level" + difficulty.getDifficulty().name() + " is: " + highScore;
 
         table.clear();
         stage.clear();
