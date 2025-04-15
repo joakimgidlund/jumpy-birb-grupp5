@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.List;
+import com.badlogic.gdx.scenes.scene2d.ui.List.ListStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
@@ -65,9 +67,17 @@ public class MainMenu implements Screen {
         Drawable quitDownDraw = new TextureRegionDrawable(quitDown);
         Button quitButton = new Button(quitUpDraw, quitDownDraw);
 
+        Drawable listBg = new TextureRegionDrawable(background);
+        ListStyle listStyle = new ListStyle(game.font, new Color(0f, 0f, 0f, 1f), new Color(1f, 1f, 1f, 1f), listBg);
+
+        List diffSelectionList = new List(listStyle);
+        Difficulty[] diffs = {new Difficulty(Diff.EASY), new Difficulty(Diff.MEDIUM), new Difficulty(Diff.HARD)};
+        diffSelectionList.setItems(diffs);
+
         playButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                difficultyLevel = (Difficulty) diffSelectionList.getSelected();
                 game.setScreen(new GameScreen(game, difficultyLevel));
             }
         });
@@ -79,8 +89,10 @@ public class MainMenu implements Screen {
             }
         });
 
-        table.padTop(300);
-        table.add(playButton).height(100).width(200).padBottom(50);
+        table.padTop(250);
+        table.left().center();
+        table.add(playButton).height(100).width(200).padBottom(30);
+        table.add(diffSelectionList).height(100).padLeft(10);
         table.row();
         table.add(quitButton).height(100).width(200);
 
