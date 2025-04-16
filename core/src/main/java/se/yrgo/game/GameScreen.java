@@ -7,6 +7,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -41,6 +42,13 @@ public class GameScreen implements Screen {
     private Texture animatedbirb;
     private Texture drop;
     private ArrayList<GameObject> raindropList;
+
+    private Texture sunsetBg;
+    private Texture cloudsBg;
+    private Texture skylineBg;
+    private Texture oceanBg;
+    private Background background;
+
     private GameObject rain;
     private float rainTimer = 0f;
     private float rainSpawnInterval = 0.1f; // 0.1 sek mellan varje droppe
@@ -69,8 +77,15 @@ public class GameScreen implements Screen {
 
         stage = new Stage(game.viewport);
         this.difficulty = difficulty;
-
+        
         loadTextures();
+
+        background = new Background(Birb.SCREEN_WIDTH, 
+            200.0f, 
+            new TextureRegion(sunsetBg),
+            new TextureRegion(oceanBg),
+            new TextureRegion(cloudsBg),
+            new TextureRegion(skylineBg));
 
         player = new GameObject(animatedbirb, 50, 335, 38, 50, -2.5f);
         obstacleList = new ArrayList<>();
@@ -122,6 +137,7 @@ public class GameScreen implements Screen {
 
         if (!stopGame) {
             ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
+            background.update(delta);
             updateGameObjects();
             obstacleLogic();
             collision();
@@ -174,7 +190,8 @@ public class GameScreen implements Screen {
 
     private void drawing() {
         game.batch.begin();
-        game.batch.draw(bg, 0, 0);
+        // game.batch.draw(bg, 0, 0);
+        background.render(game.batch);
 
         Obstacle.drawObstacles(game.batch, obstacleList);
          // Draw rain
@@ -317,6 +334,11 @@ public class GameScreen implements Screen {
         animatedbirb = new Texture("spritesheetbirb.png");
         textureList = new ArrayList<>();
         drop = new Texture("raindrop.png");
+        sunsetBg = new Texture("sunset_layer.png");
+        skylineBg = new Texture("skyline.png");
+        cloudsBg = new Texture("clouds.png");
+        oceanBg = new Texture("ocean.png");
+
         Collections.addAll(textureList, karlatornet, lappstiftet, lisebergstornet, masthugg, poseidon);
     }
 
