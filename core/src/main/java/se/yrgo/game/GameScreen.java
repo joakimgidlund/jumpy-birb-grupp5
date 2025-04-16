@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.Preferences;
 
@@ -46,6 +47,7 @@ public class GameScreen implements Screen {
     private int score;
 
     private Sound sound;
+    private Music music;
 
     private boolean stopGame; // Stops the game if hit a obstacle
 
@@ -69,6 +71,9 @@ public class GameScreen implements Screen {
         obstacleList = new ArrayList<>();
         score = 0;
         sound = Gdx.audio.newSound(Gdx.files.internal("Seagull.mp3"));
+        music = Gdx.audio.newMusic(Gdx.files.internal("jumpy_birb_theme.mp3"));
+        music.setLooping(true);
+        music.setVolume(0.5F);
 
         Gdx.input.setInputProcessor(new InputMultiplexer());
 
@@ -86,6 +91,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
+        music.play();
         // insert music?
     }
 
@@ -300,5 +306,6 @@ public class GameScreen implements Screen {
         poseidon.dispose();
         birb.dispose();
         animatedbirb.dispose();
+        music.dispose();
     }
 }
