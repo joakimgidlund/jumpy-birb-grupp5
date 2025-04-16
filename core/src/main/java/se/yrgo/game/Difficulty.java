@@ -10,6 +10,7 @@ public class Difficulty {
     private Diff difficulty;
     private int speed;
     private int gap;
+    private boolean isRaining = false;
 
     public Difficulty(Diff difficulty) {
         this.difficulty = difficulty;
@@ -31,6 +32,7 @@ public class Difficulty {
             case HARD: {
                 speed = -7;
                 gap = 200;
+                isRaining = true;
                 break;
             }
             default: {
@@ -51,6 +53,10 @@ public class Difficulty {
 
     public int getGap() {
         return gap;
+    }
+
+    public boolean getIsRaining() {
+        return isRaining;
     }
 
     @Override
