@@ -47,6 +47,7 @@ public class GameScreen implements Screen {
     private Texture cloudsBg;
     private Texture skylineBg;
     private Texture oceanBg;
+    private Texture boatBg;
     private Background background;
 
     private GameObject rain;
@@ -83,6 +84,7 @@ public class GameScreen implements Screen {
         background = new Background(Birb.SCREEN_WIDTH, 
             200.0f, 
             new TextureRegion(sunsetBg),
+            new TextureRegion(boatBg),
             new TextureRegion(oceanBg),
             new TextureRegion(cloudsBg),
             new TextureRegion(skylineBg));
@@ -325,19 +327,20 @@ public class GameScreen implements Screen {
 
     private void loadTextures() {
         bg = new Texture("softsunset_bg.png");
-        karlatornet = new Texture("karlatornet.png");
-        lappstiftet = new Texture("lappstiftet.png");
-        lisebergstornet = new Texture("lisebergstornet.png");
-        masthugg = new Texture("masthuggskyrkan.png");
-        poseidon = new Texture("poseidon.png");
+        karlatornet = new Texture("obs_karlatornet.png");
+        lappstiftet = new Texture("obs_lappstiftet.png");
+        lisebergstornet = new Texture("obs_liseberg.png");
+        masthugg = new Texture("obs_masthuggskyrkan.png");
+        poseidon = new Texture("obs_poseidon.png");
         birb = new Texture("doris.png");
         animatedbirb = new Texture("spritesheetbirb.png");
         textureList = new ArrayList<>();
         drop = new Texture("raindrop.png");
         sunsetBg = new Texture("sunset_layer.png");
-        skylineBg = new Texture("skyline.png");
+        skylineBg = new Texture("skylinebg.png");
         cloudsBg = new Texture("clouds.png");
         oceanBg = new Texture("ocean.png");
+        boatBg = new Texture("boatbg.png");
 
         Collections.addAll(textureList, karlatornet, lappstiftet, lisebergstornet, masthugg, poseidon);
     }
