@@ -78,11 +78,11 @@ public class GameScreen implements Screen {
 
         stage = new Stage(game.viewport);
         this.difficulty = difficulty;
-        
+
         loadTextures();
 
-        background = new Background(Birb.SCREEN_WIDTH, 
-            200.0f, 
+        background = new Background(Birb.SCREEN_WIDTH,
+            200.0f,
             new TextureRegion(sunsetBg),
             new TextureRegion(boatBg),
             new TextureRegion(oceanBg),
@@ -268,15 +268,15 @@ public class GameScreen implements Screen {
     }
     private void rainLogic() {
         rainTimer += Gdx.graphics.getDeltaTime();
-    
+
         if (rainTimer >= rainSpawnInterval) {
             int height = ThreadLocalRandom.current().nextInt(720, 800);
             int width = ThreadLocalRandom.current().nextInt(0, 1280);
             raindropList.add(new GameObject(drop, width, height, 4, 4, -2.0f));
-    
+
             rainTimer = 0f;
         }
-    
+
         // Removes the first drop that goes off-screen.
         if (!raindropList.isEmpty() && raindropList.get(0).getPosition().y < -100) {
             raindropList.remove(0);
@@ -308,7 +308,7 @@ public class GameScreen implements Screen {
     // Start a new game
     private void newGame() {
 
-        highScoreString = "Your highscore score for level" + difficulty.getDifficulty().name() + " is: " + highScore;
+        highScoreString = "Your high score for level " + difficulty.getDifficulty().name() + " is: " + highScore;
 
         table.clear();
         stage.clear();
