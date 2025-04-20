@@ -7,6 +7,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -38,6 +39,8 @@ public class GameScreen implements Screen {
     private Texture bg;
     private Texture birb;
     private Texture animatedbirb;
+    
+    private BitmapFont font;
 
     private Stage stage;
     Table table;
@@ -76,6 +79,8 @@ public class GameScreen implements Screen {
         highScore = prefs.getInteger("highscore");
         highScoreString = "Your high score is: " + highScore;
         prefs.flush();
+
+        font = new BitmapFont(Gdx.files.internal("Font_ErasBold.fnt"));     //font
     }
 
     @Override
@@ -156,7 +161,7 @@ public class GameScreen implements Screen {
         game.batch.draw(player.getCurrentFrame(), player.getPosition().x, player.getPosition().y);
 
         // Draw a text with current score
-        game.font.draw(game.batch, "Score: " + score, Birb.SCREEN_WIDTH / 2 - 30, Birb.SCREEN_HEIGHT - 50);
+        font.draw(game.batch, "Score: " + score, Birb.SCREEN_WIDTH * 0.75f, Birb.SCREEN_HEIGHT - 50);
 
         // Game over screen
         if (stopGame) {
@@ -165,6 +170,8 @@ public class GameScreen implements Screen {
             game.batch.end();
         }
     }
+
+    
 
     private void drawGameOver() {
         table = new Table();
