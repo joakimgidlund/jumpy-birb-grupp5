@@ -1,7 +1,10 @@
 package se.yrgo.game;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 
@@ -70,13 +73,12 @@ public class GameObject {
     }
 
     public void movement() {
-        if(yVelocity > 0) {
-            yVelocity += gravity;  //Applies gravity
-        }
-        else {
+        if (yVelocity > 0) {
+            yVelocity += gravity; // Applies gravity
+        } else {
             yVelocity += gravity * 0.1f;
         }
-        //Update the birbs position with the new y value
+        // Update the birbs position with the new y value
         yMove(yVelocity);
     }
 
@@ -100,6 +102,13 @@ public class GameObject {
         this.wingsIsFlapping = wingFlap;
         if (wingsIsFlapping) {
             stateTime = 0;
+        }
+    }
+
+    public static void drawRain(SpriteBatch batch, ArrayList<GameObject> raindropList) {
+        for (GameObject r : raindropList) {
+            batch.draw(r.texture, r.getPosition().x, r.getPosition().y);
+
         }
     }
 }

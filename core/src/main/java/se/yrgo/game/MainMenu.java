@@ -73,6 +73,7 @@ public class MainMenu implements Screen {
         List diffSelectionList = new List(listStyle);
         Difficulty[] diffs = {new Difficulty(Diff.EASY), new Difficulty(Diff.MEDIUM), new Difficulty(Diff.HARD)};
         diffSelectionList.setItems(diffs);
+        diffSelectionList.setSelectedIndex(1);
 
         playButton.addListener(new ChangeListener() {
             @Override
