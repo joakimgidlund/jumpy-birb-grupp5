@@ -7,7 +7,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.Preferences;
 
@@ -41,6 +42,19 @@ public class GameScreen implements Screen {
     private Texture animatedbirb;
     
     private BitmapFont font;
+    private Texture drop;
+    private ArrayList<GameObject> raindropList;
+
+    private Texture sunsetBg;
+    private Texture cloudsBg;
+    private Texture skylineBg;
+    private Texture oceanBg;
+    private Texture boatBg;
+    private Background background;
+
+    private GameObject rain;
+    private float rainTimer = 0f;
+    private float rainSpawnInterval = 0.1f; // 0.1 sek mellan varje droppe
 
     private Stage stage;
     Table table;
@@ -49,6 +63,7 @@ public class GameScreen implements Screen {
     private int score;
 
     private Sound sound;
+    private Music music;
 
     private boolean stopGame; // Stops the game if hit a obstacle
 
@@ -68,16 +83,30 @@ public class GameScreen implements Screen {
 
         loadTextures();
 
+        background = new Background(Birb.SCREEN_WIDTH,
+            200.0f,
+            new TextureRegion(sunsetBg),
+            new TextureRegion(boatBg),
+            new TextureRegion(oceanBg),
+            new TextureRegion(cloudsBg),
+            new TextureRegion(skylineBg));
+
         player = new GameObject(animatedbirb, 50, 335, 38, 50, -2.5f);
         obstacleList = new ArrayList<>();
+        raindropList = new ArrayList<>();
+        rain = new GameObject(drop, 100, 720, 4, 4, -2f);
         score = 0;
         sound = Gdx.audio.newSound(Gdx.files.internal("Seagull.mp3"));
+        music = Gdx.audio.newMusic(Gdx.files.internal("jumpy_birb_theme.mp3"));
+        music.setLooping(true);
+        music.setVolume(0.5F);
 
         Gdx.input.setInputProcessor(new InputMultiplexer());
 
         prefs = Gdx.app.getPreferences("HighScoreDataFile");
-        highScore = prefs.getInteger("highscore");
-        highScoreString = "Your high score is: " + highScore;
+        String key = "highscore_" + difficulty.getDifficulty().name();
+        highScore = prefs.getInteger(key, 0); // highScore is 0 if not set.
+        highScoreString = "Your high score for " + difficulty.getDifficulty().name() + " is: " + highScore;
         prefs.flush();
 
         font = new BitmapFont(Gdx.files.internal("Font_ErasBold.fnt"));     //font
@@ -90,14 +119,16 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
+        music.play();
         // insert music?
     }
 
     public void setHighScore(int score) {
         prefs = Gdx.app.getPreferences("HighScoreDataFile"); // HighScore is being saved in this file.
-        prefs.putInteger("highscore", score);
+        String key = "highscore_" + difficulty.getDifficulty().name(); // sets e.g highscore_EASY
+        prefs.putInteger(key, score);
         highScore = score;
-        highScoreString = "New high score: " + highScore + "!!!!!!";
+        highScoreString = "New high score for level " + difficulty.getDifficulty().name() + " is: " + highScore + "!!!";
         prefs.flush();
     }
 
@@ -112,9 +143,14 @@ public class GameScreen implements Screen {
 
         if (!stopGame) {
             ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
+            background.update(delta);
             updateGameObjects();
             obstacleLogic();
             collision();
+            if (difficulty.getIsRaining()) {
+                rainLogic();
+                makeItRain();
+            }
         }
         if (stopGame && score > highScore) { // Sets new high score if the new score is higher
             setHighScore(score);
@@ -151,11 +187,21 @@ public class GameScreen implements Screen {
         player.updateAnimation(Gdx.graphics.getDeltaTime());
     }
 
+    private void makeItRain() {
+        for (GameObject rain : raindropList) {
+            rain.movement();
+
+        }
+    }
+
     private void drawing() {
         game.batch.begin();
-        game.batch.draw(bg, 0, 0);
+        // game.batch.draw(bg, 0, 0);
+        background.render(game.batch);
 
         Obstacle.drawObstacles(game.batch, obstacleList);
+         // Draw rain
+         GameObject.drawRain(game.batch, raindropList);
 
         // Draw player character
         game.batch.draw(player.getCurrentFrame(), player.getPosition().x, player.getPosition().y);
@@ -226,6 +272,22 @@ public class GameScreen implements Screen {
             obstacleList.remove(0);
         }
     }
+    private void rainLogic() {
+        rainTimer += Gdx.graphics.getDeltaTime();
+
+        if (rainTimer >= rainSpawnInterval) {
+            int height = ThreadLocalRandom.current().nextInt(720, 800);
+            int width = ThreadLocalRandom.current().nextInt(0, 1280);
+            raindropList.add(new GameObject(drop, width, height, 4, 4, -2.0f));
+
+            rainTimer = 0f;
+        }
+
+        // Removes the first drop that goes off-screen.
+        if (!raindropList.isEmpty() && raindropList.get(0).getPosition().y < -100) {
+            raindropList.remove(0);
+        }
+    }
 
     public void collision() {
         // Saving player position for cleaner if-case
@@ -252,7 +314,7 @@ public class GameScreen implements Screen {
     // Start a new game
     private void newGame() {
 
-        highScoreString = "Your highscore score is: " + highScore;
+        highScoreString = "Your high score for level " + difficulty.getDifficulty().name() + " is: " + highScore;
 
         table.clear();
         stage.clear();
@@ -271,19 +333,27 @@ public class GameScreen implements Screen {
 
     private void loadTextures() {
         bg = new Texture("softsunset_bg.png");
-        karlatornet = new Texture("karlatornet.png");
-        lappstiftet = new Texture("lappstiftet.png");
-        lisebergstornet = new Texture("lisebergstornet.png");
-        masthugg = new Texture("masthuggskyrkan.png");
-        poseidon = new Texture("poseidon.png");
+        karlatornet = new Texture("obs_karlatornet.png");
+        lappstiftet = new Texture("obs_lappstiftet.png");
+        lisebergstornet = new Texture("obs_liseberg.png");
+        masthugg = new Texture("obs_masthuggskyrkan.png");
+        poseidon = new Texture("obs_poseidon.png");
         birb = new Texture("doris.png");
         animatedbirb = new Texture("spritesheetbirb.png");
         textureList = new ArrayList<>();
+        drop = new Texture("raindrop.png");
+        sunsetBg = new Texture("sunset_layer.png");
+        skylineBg = new Texture("skylinebg.png");
+        cloudsBg = new Texture("clouds.png");
+        oceanBg = new Texture("ocean.png");
+        boatBg = new Texture("boatbg.png");
+
         Collections.addAll(textureList, karlatornet, lappstiftet, lisebergstornet, masthugg, poseidon);
     }
 
     @Override
     public void hide() {
+        music.stop();
     }
 
     @Override
@@ -304,5 +374,7 @@ public class GameScreen implements Screen {
         poseidon.dispose();
         birb.dispose();
         animatedbirb.dispose();
+        music.dispose();
+        drop.dispose();
     }
 }
