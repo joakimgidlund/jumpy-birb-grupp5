@@ -41,7 +41,7 @@ public class GameScreen implements Screen {
     private Texture bg;
     private Texture birb;
     private Texture animatedbirb;
-    
+
     private BitmapFont font;
     private Texture drop;
     private ArrayList<GameObject> raindropList;
@@ -85,12 +85,12 @@ public class GameScreen implements Screen {
         loadTextures();
 
         background = new Background(Birb.SCREEN_WIDTH,
-            200.0f,
-            new TextureRegion(sunsetBg),
-            new TextureRegion(boatBg),
-            new TextureRegion(oceanBg),
-            new TextureRegion(cloudsBg),
-            new TextureRegion(skylineBg));
+                200.0f,
+                new TextureRegion(sunsetBg),
+                new TextureRegion(boatBg),
+                new TextureRegion(oceanBg),
+                new TextureRegion(cloudsBg),
+                new TextureRegion(skylineBg));
 
         player = new GameObject(animatedbirb, 50, 335, 38, 50, -2.5f);
         obstacleList = new ArrayList<>();
@@ -110,7 +110,7 @@ public class GameScreen implements Screen {
         highScoreString = "Your high score for " + difficulty.getDifficulty().name() + " is: " + highScore;
         prefs.flush();
 
-        font = new BitmapFont(Gdx.files.internal("Font_ErasBold.fnt"));     //font
+        font = new BitmapFont(Gdx.files.internal("Font_ErasBoldV2.fnt")); // font
     }
 
     @Override
@@ -201,14 +201,16 @@ public class GameScreen implements Screen {
         background.render(game.batch);
 
         Obstacle.drawObstacles(game.batch, obstacleList);
-         // Draw rain
-         GameObject.drawRain(game.batch, raindropList);
+        // Draw rain
+        GameObject.drawRain(game.batch, raindropList);
 
         // Draw player character
         game.batch.draw(player.getCurrentFrame(), player.getPosition().x, player.getPosition().y);
 
         // Draw a text with current score
-        font.draw(game.batch, "Score: " + score, Birb.SCREEN_WIDTH * 0.75f, Birb.SCREEN_HEIGHT - 50);
+        if (!stopGame) {
+            font.draw(game.batch, "Score: " + score, Birb.SCREEN_WIDTH * 0.75f, Birb.SCREEN_HEIGHT - 50);
+        }
 
         // Game over screen
         if (stopGame) {
@@ -218,11 +220,12 @@ public class GameScreen implements Screen {
         }
     }
 
-    
-
+    // Game over screen
     private void drawGameOver() {
         table = new Table();
-        LabelStyle labelStyle = new LabelStyle(game.font, new Color(255, 255, 255, 1f));
+        LabelStyle labelStyle = new LabelStyle();  //(game.font, new Color(255, 255, 255, 1f))
+        labelStyle.font = font;
+
         Label gameOverLabel = new Label("GAME OVER", labelStyle);
         Label scoreLabel = new Label("Your score was: " + score, labelStyle);
         Label newGameLabel = new Label("Press N to start a new game.\nPress ESC to exit to main menu.", labelStyle);
@@ -246,7 +249,7 @@ public class GameScreen implements Screen {
         table.row();
         table.add(highScoreLabel);
         table.row();
-        table.add(newGameLabel).padTop(200);
+        table.add(newGameLabel).padTop(100);
 
         stage.addActor(table);
         stage.draw();
@@ -273,6 +276,7 @@ public class GameScreen implements Screen {
             obstacleList.remove(0);
         }
     }
+
     private void rainLogic() {
         rainTimer += Gdx.graphics.getDeltaTime();
 

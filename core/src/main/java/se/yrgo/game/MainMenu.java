@@ -14,11 +14,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
 import se.yrgo.game.Difficulty.Diff;
 
 public class MainMenu implements Screen {
-
+    
     Birb game;
     Stage stage;
 
@@ -31,6 +32,8 @@ public class MainMenu implements Screen {
     Texture quitDown;
 
     Difficulty difficultyLevel;
+
+    private BitmapFont font;
 
     public MainMenu(Birb game) {
         this.game = game;
@@ -50,6 +53,8 @@ public class MainMenu implements Screen {
         Gdx.input.setInputProcessor(stage);
 
         game.viewport.apply();
+
+        font = new BitmapFont(Gdx.files.internal("Font_ErasBoldV4small.fnt")); // font
     }
 
     @Override
@@ -68,7 +73,7 @@ public class MainMenu implements Screen {
         Button quitButton = new Button(quitUpDraw, quitDownDraw);
 
         Drawable listBg = new TextureRegionDrawable(background);
-        ListStyle listStyle = new ListStyle(game.font, new Color(0f, 0f, 0f, 1f), new Color(1f, 1f, 1f, 1f), listBg);
+        ListStyle listStyle = new ListStyle(font, new Color(1f, 1f, 1f, 1f), new Color(1f, 1f, 1f, 1f), listBg);
 
         List diffSelectionList = new List(listStyle);
         Difficulty[] diffs = {new Difficulty(Diff.EASY), new Difficulty(Diff.MEDIUM), new Difficulty(Diff.HARD)};
