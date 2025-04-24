@@ -43,6 +43,8 @@ public class GameScreen implements Screen {
     private Texture animatedbirb;
 
     private BitmapFont font;
+    private BitmapFont fontGreen;
+
     private Texture drop;
     private ArrayList<GameObject> raindropList;
 
@@ -111,6 +113,7 @@ public class GameScreen implements Screen {
         prefs.flush();
 
         font = new BitmapFont(Gdx.files.internal("Font_ErasBoldV2.fnt")); // font
+        fontGreen = new BitmapFont(Gdx.files.internal("Font_ErasBold_40green.fnt")); // font
     }
 
     @Override
@@ -223,10 +226,10 @@ public class GameScreen implements Screen {
     // Game over screen
     private void drawGameOver() {
         table = new Table();
-        LabelStyle labelStyle = new LabelStyle();  //(game.font, new Color(255, 255, 255, 1f))
-        labelStyle.font = font;
+        LabelStyle labelStyle = new LabelStyle(font, new Color(255, 255, 255, 1f));
+        LabelStyle labelStyleGameOver = new LabelStyle(fontGreen, new Color(255, 255, 255, 1f));
 
-        Label gameOverLabel = new Label("GAME OVER", labelStyle);
+        Label gameOverLabel = new Label("GAME OVER", labelStyleGameOver);
         Label scoreLabel = new Label("Your score was: " + score, labelStyle);
         Label newGameLabel = new Label("Press N to start a new game.\nPress ESC to exit to main menu.", labelStyle);
         Label highScoreLabel = new Label(highScoreString, labelStyle);
