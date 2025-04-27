@@ -15,6 +15,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 
 import se.yrgo.game.Difficulty.Diff;
 
@@ -56,7 +58,13 @@ public class MainMenu implements Screen {
 
         game.viewport.apply();
 
-        font = new BitmapFont(Gdx.files.internal("Font_ErasBoldV4small.fnt")); // font
+        FreeTypeFontGenerator gen = new FreeTypeFontGenerator(Gdx.files.internal("bahnschrift.ttf"));
+        FreeTypeFontParameter para = new FreeTypeFontParameter();
+        para.size = 24;
+        para.color = Color.CORAL;
+        para.borderColor = Color.BLACK;
+        para.borderWidth = 1f;
+        font = gen.generateFont(para);
     }
 
     @Override
