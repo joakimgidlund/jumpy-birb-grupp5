@@ -42,8 +42,8 @@ public class GameScreen implements Screen {
     private Texture birb;
     private Texture animatedbirb;
 
-    private BitmapFont font;
-    private BitmapFont fontGreen;
+    private BitmapFont scoreFont;
+    private BitmapFont gameOverFont;
 
     private Texture drop;
     private ArrayList<GameObject> raindropList;
@@ -55,9 +55,8 @@ public class GameScreen implements Screen {
     private Texture boatBg;
     private Background background;
 
-    private GameObject rain;
     private float rainTimer = 0f;
-    private float rainSpawnInterval = 0.1f; // 0.1 sek mellan varje droppe
+    private float rainSpawnInterval = 0.1f; // 0.1 seconds between each rain drop
 
     private Stage stage;
     Table table;
@@ -97,8 +96,9 @@ public class GameScreen implements Screen {
         player = new GameObject(animatedbirb, 50, 335, 38, 50, -2.5f);
         obstacleList = new ArrayList<>();
         raindropList = new ArrayList<>();
-        rain = new GameObject(drop, 100, 720, 4, 4, -2f);
+
         score = 0;
+
         sound = Gdx.audio.newSound(Gdx.files.internal("Seagull.mp3"));
         music = Gdx.audio.newMusic(Gdx.files.internal("jumpy_birb_theme.mp3"));
         music.setLooping(true);
@@ -112,8 +112,8 @@ public class GameScreen implements Screen {
         highScoreString = "Your high score for " + difficulty.getDifficulty().name() + " is: " + highScore;
         prefs.flush();
 
-        font = new BitmapFont(Gdx.files.internal("Font_ErasBoldV2.fnt")); // font
-        fontGreen = new BitmapFont(Gdx.files.internal("Font_ErasBold_40green.fnt")); // font
+        scoreFont = new BitmapFont(Gdx.files.internal("Font_ErasBoldV2.fnt")); // font
+        gameOverFont = new BitmapFont(Gdx.files.internal("Font_ErasBold_40green.fnt")); // font
     }
 
     @Override
@@ -124,7 +124,6 @@ public class GameScreen implements Screen {
     @Override
     public void show() {
         music.play();
-        // insert music?
     }
 
     public void setHighScore(int score) {
@@ -212,7 +211,7 @@ public class GameScreen implements Screen {
 
         // Draw a text with current score
         if (!stopGame) {
-            font.draw(game.batch, "Score: " + score, Birb.SCREEN_WIDTH * 0.75f, Birb.SCREEN_HEIGHT - 50);
+            scoreFont.draw(game.batch, "Score: " + score, Birb.SCREEN_WIDTH * 0.75f, Birb.SCREEN_HEIGHT - 50f);
         }
 
         // Game over screen
@@ -226,8 +225,8 @@ public class GameScreen implements Screen {
     // Game over screen
     private void drawGameOver() {
         table = new Table();
-        LabelStyle labelStyle = new LabelStyle(font, new Color(255, 255, 255, 1f));
-        LabelStyle labelStyleGameOver = new LabelStyle(fontGreen, new Color(255, 255, 255, 1f));
+        LabelStyle labelStyle = new LabelStyle(scoreFont, new Color(255, 255, 255, 1f));
+        LabelStyle labelStyleGameOver = new LabelStyle(gameOverFont, new Color(255, 255, 255, 1f));
 
         Label gameOverLabel = new Label("GAME OVER", labelStyleGameOver);
         Label scoreLabel = new Label("Your score was: " + score, labelStyle);
@@ -274,7 +273,6 @@ public class GameScreen implements Screen {
         }
 
         // Removes the first obstacle that goes off-screen.
-        // Currently also resets collision flag for testing
         if (obstacleList.get(0).getBottomRect().x < -100) {
             obstacleList.remove(0);
         }
