@@ -211,7 +211,6 @@ public class GameScreen implements Screen {
 
     private void drawing() {
         game.batch.begin();
-        // game.batch.draw(bg, 0, 0);
         background.render(game.batch);
 
         Obstacle.drawObstacles(game.batch, obstacleList);
