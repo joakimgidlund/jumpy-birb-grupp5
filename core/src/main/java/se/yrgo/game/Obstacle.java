@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class Obstacle {
 
@@ -53,7 +53,7 @@ public class Obstacle {
         gapRect.x += speed;
     }
 
-    public static void drawObstacles(SpriteBatch batch, ArrayList<Obstacle> obstacleList) {
+    public static void drawObstacles(SpriteBatch batch, List<Obstacle> obstacleList) {
         for (Obstacle o : obstacleList) {
             batch.draw(o.texture, o.bottomRect.x, o.bottomRect.y,
                 0, 0, (int) o.bottomRect.width, (int) o.bottomRect.height);
