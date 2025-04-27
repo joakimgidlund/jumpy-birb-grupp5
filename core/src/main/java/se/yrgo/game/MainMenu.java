@@ -65,6 +65,7 @@ public class MainMenu implements Screen {
 
         table.setFillParent(true);
         table.top();
+        table.setPosition(50, 0);
 
         Drawable playUpDraw = new TextureRegionDrawable(playUp);
         Drawable playDownDraw = new TextureRegionDrawable(playDown);
@@ -98,7 +99,6 @@ public class MainMenu implements Screen {
         });
 
         table.padTop(250);
-        table.left().center();
         table.add(playButton).height(100).width(200).padBottom(30);
         table.add(diffSelectionList).height(100).padLeft(10);
         table.row();
