@@ -19,7 +19,7 @@ public class Obstacle {
         this.texture = texture;
         bottomRect = new Rectangle(x, y, width, height);
         topRect = new Rectangle(x, y + height + gap, width, 720);
-        gapRect = new Rectangle(x, y + height, width, gap);
+        gapRect = new Rectangle(x + 100f, 0, width, 720);
         isScored = false;
     }
 
