@@ -34,7 +34,7 @@ public class MainMenu implements Screen {
 
     Difficulty difficultyLevel;
 
-    private BitmapFont font;
+    private BitmapFont difficultyFont;
 
     public MainMenu(Birb game) {
         this.game = game;
@@ -42,13 +42,13 @@ public class MainMenu implements Screen {
         difficultyLevel = new Difficulty(Diff.MEDIUM);
 
         splash = new Texture("doris.png");
-        background = new Texture("start_menu.png");
+        background = new Texture("menu-assets/start_menu.png");
 
-        playUp = new Texture("play_up.png");
-        playDown = new Texture("play_down.png");
-        quitUp = new Texture("quit_up.png");
-        quitDown = new Texture("quit_down.png");
-        diffSelectTexture = new Texture("listBg.png");
+        playUp = new Texture("menu-assets/play_up.png");
+        playDown = new Texture("menu-assets/play_down.png");
+        quitUp = new Texture("menu-assets/quit_up.png");
+        quitDown = new Texture("menu-assets/quit_down.png");
+        diffSelectTexture = new Texture("menu-assets/listBg.png");
         
 
         stage = new Stage(game.viewport);
@@ -56,7 +56,7 @@ public class MainMenu implements Screen {
 
         game.viewport.apply();
 
-        font = new BitmapFont(Gdx.files.internal("Font_ErasBoldV4small.fnt")); // font
+        difficultyFont = new BitmapFont(Gdx.files.internal("fonts/Font_ErasBoldV4small.fnt")); // font
     }
 
     @Override
@@ -76,7 +76,7 @@ public class MainMenu implements Screen {
         Button quitButton = new Button(quitUpDraw, quitDownDraw);
 
         Drawable listBg = new TextureRegionDrawable(diffSelectTexture);
-        ListStyle listStyle = new ListStyle(font, new Color(1f, 1f, 1f, 1f), new Color(1f, 1f, 1f, 1f), listBg);
+        ListStyle listStyle = new ListStyle(difficultyFont, new Color(1f, 1f, 1f, 1f), new Color(1f, 1f, 1f, 1f), listBg);
 
         List diffSelectionList = new List(listStyle);
         Difficulty[] diffs = {new Difficulty(Diff.EASY), new Difficulty(Diff.MEDIUM), new Difficulty(Diff.HARD)};
@@ -98,7 +98,7 @@ public class MainMenu implements Screen {
             }
         });
 
-        table.padTop(250);
+        table.padTop(300);
         table.add(playButton).height(100).width(200).padBottom(30);
         table.add(diffSelectionList).height(100).padLeft(10);
         table.row();
@@ -122,7 +122,7 @@ public class MainMenu implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        game.viewport.update(width, height, true);
+        //Resizing is not available so not applicable
     }
 
     @Override

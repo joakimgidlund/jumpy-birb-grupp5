@@ -99,8 +99,8 @@ public class GameScreen implements Screen {
 
         score = 0;
 
-        sound = Gdx.audio.newSound(Gdx.files.internal("Seagull.mp3"));
-        music = Gdx.audio.newMusic(Gdx.files.internal("jumpy_birb_theme.mp3"));
+        sound = Gdx.audio.newSound(Gdx.files.internal("sounds/Seagull.mp3"));
+        music = Gdx.audio.newMusic(Gdx.files.internal("sounds/jumpy_birb_theme.mp3"));
         music.setLooping(true);
         music.setVolume(0.5F);
 
@@ -112,8 +112,8 @@ public class GameScreen implements Screen {
         highScoreString = "Your high score for " + difficulty.getDifficulty().name() + " is: " + highScore;
         prefs.flush();
 
-        scoreFont = new BitmapFont(Gdx.files.internal("Font_ErasBoldV2.fnt")); // font
-        gameOverFont = new BitmapFont(Gdx.files.internal("Font_ErasBold_40green.fnt")); // font
+        scoreFont = new BitmapFont(Gdx.files.internal("fonts/Font_ErasBoldV2.fnt")); // font
+        gameOverFont = new BitmapFont(Gdx.files.internal("fonts/Font_ErasBold_40green.fnt")); // font
     }
 
     @Override
