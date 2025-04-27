@@ -30,6 +30,7 @@ public class MainMenu implements Screen {
     Texture playDown;
     Texture quitUp;
     Texture quitDown;
+    Texture diffSelectTexture;
 
     Difficulty difficultyLevel;
 
@@ -47,6 +48,7 @@ public class MainMenu implements Screen {
         playDown = new Texture("play_down.png");
         quitUp = new Texture("quit_up.png");
         quitDown = new Texture("quit_down.png");
+        diffSelectTexture = new Texture("listBg.png");
         
 
         stage = new Stage(game.viewport);
@@ -72,7 +74,7 @@ public class MainMenu implements Screen {
         Drawable quitDownDraw = new TextureRegionDrawable(quitDown);
         Button quitButton = new Button(quitUpDraw, quitDownDraw);
 
-        Drawable listBg = new TextureRegionDrawable(background);
+        Drawable listBg = new TextureRegionDrawable(diffSelectTexture);
         ListStyle listStyle = new ListStyle(font, new Color(1f, 1f, 1f, 1f), new Color(1f, 1f, 1f, 1f), listBg);
 
         List diffSelectionList = new List(listStyle);
@@ -111,7 +113,7 @@ public class MainMenu implements Screen {
 
         game.batch.begin();
         game.batch.draw(background, 0, 0);
-        game.batch.draw(splash, Birb.SCREEN_WIDTH / 2 - 25, 600);
+        game.batch.draw(splash, Birb.SCREEN_WIDTH / 2f - 25f, 600);
         game.batch.end();
         
         stage.act();
