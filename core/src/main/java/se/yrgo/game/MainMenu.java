@@ -2,6 +2,7 @@ package se.yrgo.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -14,6 +15,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.Timer;
+import com.badlogic.gdx.utils.Timer.Task;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
 import se.yrgo.game.Difficulty.Diff;
@@ -31,6 +34,8 @@ public class MainMenu implements Screen {
     Texture quitUp;
     Texture quitDown;
     Texture diffSelectTexture;
+
+    Sound buttonPress;
 
     Difficulty difficultyLevel;
 
@@ -50,6 +55,7 @@ public class MainMenu implements Screen {
         quitDown = new Texture("menu-assets/quit_down.png");
         diffSelectTexture = new Texture("menu-assets/listBg.png");
         
+        buttonPress = Gdx.audio.newSound(Gdx.files.internal("sounds/button_press.mp3"));
 
         stage = new Stage(game.viewport);
         Gdx.input.setInputProcessor(stage);
@@ -86,15 +92,27 @@ public class MainMenu implements Screen {
         playButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                buttonPress.play(0.5f);
                 difficultyLevel = (Difficulty) diffSelectionList.getSelected();
-                game.setScreen(new GameScreen(game, difficultyLevel));
+                Timer.schedule(new Task() {
+                    @Override
+                    public void run() {
+                        game.setScreen(new GameScreen(game, difficultyLevel));
+                    }
+                }, 0.5f);
             }
         });
 
         quitButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                Gdx.app.exit();
+                buttonPress.play(0.5f);
+                Timer.schedule(new Task() {
+                    @Override
+                    public void run() {
+                        Gdx.app.exit();
+                    }
+                }, 0.5f);
             }
         });
 
@@ -145,5 +163,7 @@ public class MainMenu implements Screen {
         playUp.dispose();
         quitUp.dispose();
         quitDown.dispose();
+        buttonPress.dispose();
+        difficultyFont.dispose();
     }
 }
