@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -42,8 +44,8 @@ public class GameScreen implements Screen {
     private Texture birb;
     private Texture animatedbirb;
 
-    private BitmapFont font;
-    private BitmapFont fontGreen;
+    private BitmapFont scoreFont;
+    private BitmapFont gameOverFont;
 
     private Texture drop;
     private ArrayList<GameObject> raindropList;
@@ -102,7 +104,7 @@ public class GameScreen implements Screen {
         sound = Gdx.audio.newSound(Gdx.files.internal("Seagull.mp3"));
         music = Gdx.audio.newMusic(Gdx.files.internal("jumpy_birb_theme.mp3"));
         music.setLooping(true);
-        music.setVolume(0.5F);
+        music.setVolume(0.1F);
 
         Gdx.input.setInputProcessor(new InputMultiplexer());
 
@@ -112,8 +114,17 @@ public class GameScreen implements Screen {
         highScoreString = "Your high score for " + difficulty.getDifficulty().name() + " is: " + highScore;
         prefs.flush();
 
-        font = new BitmapFont(Gdx.files.internal("Font_ErasBoldV2.fnt")); // font
-        fontGreen = new BitmapFont(Gdx.files.internal("Font_ErasBold_40green.fnt")); // font
+        FreeTypeFontGenerator gen = new FreeTypeFontGenerator(Gdx.files.internal("bahnschrift.ttf"));
+        FreeTypeFontParameter para = new FreeTypeFontParameter();
+        para.size = 36;
+        para.color = Color.CYAN;
+        para.borderColor = Color.BLACK;
+        para.borderWidth = 1f;
+        scoreFont = gen.generateFont(para);
+
+        para.size = 24;
+        para.color = Color.WHITE;
+        gameOverFont = gen.generateFont(para);
     }
 
     @Override
@@ -171,7 +182,7 @@ public class GameScreen implements Screen {
                 || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) && !stopGame) {
             player.setyVelocity(jumpStrength);
             player.setWingFlap(true);
-            sound.play(1.0f);
+            sound.play(0.1f);
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
@@ -212,7 +223,7 @@ public class GameScreen implements Screen {
 
         // Draw a text with current score
         if (!stopGame) {
-            font.draw(game.batch, "Score: " + score, Birb.SCREEN_WIDTH * 0.75f, Birb.SCREEN_HEIGHT - 50);
+            scoreFont.draw(game.batch, "Score: " + score, Birb.SCREEN_WIDTH * 0.75f, Birb.SCREEN_HEIGHT - 50);
         }
 
         // Game over screen
@@ -226,8 +237,8 @@ public class GameScreen implements Screen {
     // Game over screen
     private void drawGameOver() {
         table = new Table();
-        LabelStyle labelStyle = new LabelStyle(font, new Color(255, 255, 255, 1f));
-        LabelStyle labelStyleGameOver = new LabelStyle(fontGreen, new Color(255, 255, 255, 1f));
+        LabelStyle labelStyle = new LabelStyle(gameOverFont, new Color(255, 255, 255, 1f));
+        LabelStyle labelStyleGameOver = new LabelStyle(scoreFont, new Color(255, 255, 255, 1f));
 
         Label gameOverLabel = new Label("GAME OVER", labelStyleGameOver);
         Label scoreLabel = new Label("Your score was: " + score, labelStyle);
@@ -384,5 +395,8 @@ public class GameScreen implements Screen {
         animatedbirb.dispose();
         music.dispose();
         drop.dispose();
+
+        gameOverFont.dispose();
+        scoreFont.dispose();
     }
 }

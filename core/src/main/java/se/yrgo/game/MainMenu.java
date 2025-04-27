@@ -153,5 +153,6 @@ public class MainMenu implements Screen {
         playUp.dispose();
         quitUp.dispose();
         quitDown.dispose();
+        font.dispose();
     }
 }
