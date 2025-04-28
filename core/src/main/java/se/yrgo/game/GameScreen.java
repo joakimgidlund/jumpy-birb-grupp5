@@ -340,6 +340,7 @@ public class GameScreen implements Screen {
 
         // resets obstacles
         obstacleList.clear();
+        music.play();
     }
 
     private void loadTextures() {
