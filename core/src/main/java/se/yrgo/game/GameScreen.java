@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input;
@@ -90,6 +91,7 @@ public class GameScreen implements Screen {
 
         loadTextures();
         deathImage = new Image(deathCrop);
+        table = new Table();
 
         background = new Background(Birb.SCREEN_WIDTH,
                 200.0f,
@@ -122,6 +124,8 @@ public class GameScreen implements Screen {
 
         scoreFont = new BitmapFont(Gdx.files.internal("fonts/Font_ErasBoldV2.fnt")); // font
         gameOverFont = new BitmapFont(Gdx.files.internal("fonts/Font_ErasBold_40green.fnt")); // font
+
+        createGameOverScreen();
     }
 
     @Override
@@ -146,6 +150,7 @@ public class GameScreen implements Screen {
     @Override
     public void render(float delta) {
         game.viewport.apply();
+        game.batch.begin();
 
         if (obstacleList.isEmpty()) {
             Obstacle firstObstacle = new Obstacle(textureList.get(0), 1380, 0, 100, 200, difficulty.getGap());
@@ -168,8 +173,12 @@ public class GameScreen implements Screen {
         }
 
         input();
-
         drawing();
+
+        if (stopGame) {
+            stage.draw();
+        }
+        game.batch.end();
     }
 
     private void input() {
@@ -206,8 +215,6 @@ public class GameScreen implements Screen {
     }
 
     private void drawing() {
-        game.batch.begin();
-        // game.batch.draw(bg, 0, 0);
         background.render(game.batch);
 
         Obstacle.drawObstacles(game.batch, obstacleList);
@@ -221,18 +228,10 @@ public class GameScreen implements Screen {
         if (!stopGame) {
             scoreFont.draw(game.batch, "Score: " + score, Birb.SCREEN_WIDTH * 0.75f, Birb.SCREEN_HEIGHT - 50f);
         }
-
-        // Game over screen
-        if (stopGame) {
-            drawGameOver();
-        } else {
-            game.batch.end();
-        }
     }
 
     // Game over screen
-    private void drawGameOver() {
-        table = new Table();
+    private void createGameOverScreen() {
         LabelStyle labelStyle = new LabelStyle(scoreFont, new Color(255, 255, 255, 1f));
         LabelStyle labelStyleGameOver = new LabelStyle(gameOverFont, new Color(255, 255, 255, 1f));
 
@@ -243,12 +242,7 @@ public class GameScreen implements Screen {
 
         table.setFillParent(true);
         table.top();
-
-        Color c = game.batch.getColor();
-        game.batch.setColor(c.r, c.g, c.g, 0.5f);
-        game.batch.draw(tint, 0, 0, Birb.SCREEN_WIDTH, Birb.SCREEN_HEIGHT);
-        game.batch.setColor(c.r, c.g, c.g, 1f);
-        game.batch.end();
+        table.setBackground(new TextureRegionDrawable(tint));
 
         table.padTop(50);
         table.add(deathImage);
@@ -262,7 +256,6 @@ public class GameScreen implements Screen {
         table.add(newGameLabel).padTop(100);
 
         stage.addActor(table);
-        stage.draw();
     }
 
     private void obstacleLogic() {
