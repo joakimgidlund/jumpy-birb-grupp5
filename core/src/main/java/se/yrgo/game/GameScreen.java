@@ -387,5 +387,7 @@ public class GameScreen implements Screen {
         animatedbirb.dispose();
         music.dispose();
         drop.dispose();
+        sound.dispose();
+        gameOverSound.dispose();
     }
 }
