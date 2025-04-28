@@ -1,11 +1,15 @@
 package se.yrgo.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.List;
@@ -22,13 +26,13 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import se.yrgo.game.Difficulty.Diff;
 
 public class MainMenu implements Screen {
-    
+
     Birb game;
     Stage stage;
 
     Texture splash;
     Texture background;
-    
+
     Texture playUp;
     Texture playDown;
     Texture quitUp;
@@ -54,7 +58,7 @@ public class MainMenu implements Screen {
         quitUp = new Texture("menu-assets/quit_up.png");
         quitDown = new Texture("menu-assets/quit_down.png");
         diffSelectTexture = new Texture("menu-assets/listBg.png");
-        
+
         buttonPress = Gdx.audio.newSound(Gdx.files.internal("sounds/button_press.mp3"));
 
         stage = new Stage(game.viewport);
@@ -82,12 +86,29 @@ public class MainMenu implements Screen {
         Button quitButton = new Button(quitUpDraw, quitDownDraw);
 
         Drawable listBg = new TextureRegionDrawable(diffSelectTexture);
-        ListStyle listStyle = new ListStyle(difficultyFont, new Color(1f, 1f, 1f, 1f), new Color(1f, 1f, 1f, 1f), listBg);
+        ListStyle listStyle = new ListStyle(difficultyFont, new Color(1f, 1f, 1f, 1f), new Color(1f, 1f, 1f, 1f),
+                listBg);
 
         List diffSelectionList = new List(listStyle);
-        Difficulty[] diffs = {new Difficulty(Diff.EASY), new Difficulty(Diff.MEDIUM), new Difficulty(Diff.HARD)};
+        Difficulty[] diffs = { new Difficulty(Diff.EASY), new Difficulty(Diff.MEDIUM), new Difficulty(Diff.HARD) };
         diffSelectionList.setItems((Object[]) diffs);
         diffSelectionList.setSelectedIndex(1);
+
+        diffSelectionList.addCaptureListener(new InputListener() {
+            public boolean keyUp(InputEvent event, int button) {
+                if (button == Keys.SPACE) {
+                    buttonPress.play(0.5f);
+                    difficultyLevel = (Difficulty) diffSelectionList.getSelected();
+                    Timer.schedule(new Task() {
+                        @Override
+                        public void run() {
+                            game.setScreen(new GameScreen(game, difficultyLevel));
+                        }
+                    }, 0.5f);
+                }
+                return false;
+            }
+        });
 
         playButton.addListener(new ChangeListener() {
             @Override
@@ -135,14 +156,14 @@ public class MainMenu implements Screen {
         game.batch.draw(background, 0, 0);
         game.batch.draw(splash, Birb.SCREEN_WIDTH / 2f - 25f, 600);
         game.batch.end();
-        
+
         stage.act();
         stage.draw();
     }
 
     @Override
     public void resize(int width, int height) {
-        //Resizing is not available so not applicable
+        // Resizing is not available so not applicable
     }
 
     @Override
