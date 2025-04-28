@@ -86,7 +86,7 @@ public class MainMenu implements Screen {
 
         List diffSelectionList = new List(listStyle);
         Difficulty[] diffs = {new Difficulty(Diff.EASY), new Difficulty(Diff.MEDIUM), new Difficulty(Diff.HARD)};
-        diffSelectionList.setItems(diffs);
+        diffSelectionList.setItems((Object[]) diffs);
         diffSelectionList.setSelectedIndex(1);
 
         playButton.addListener(new ChangeListener() {
@@ -121,6 +121,8 @@ public class MainMenu implements Screen {
         table.add(diffSelectionList).height(100).padLeft(10);
         table.row();
         table.add(quitButton).height(100).width(200);
+
+        stage.setKeyboardFocus(diffSelectionList);
 
         stage.addActor(table);
     }
