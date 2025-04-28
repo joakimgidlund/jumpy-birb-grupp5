@@ -95,6 +95,7 @@ public class MainMenu implements Screen {
         diffSelectionList.setSelectedIndex(1);
 
         diffSelectionList.addCaptureListener(new InputListener() {
+            @Override
             public boolean keyUp(InputEvent event, int button) {
                 if (button == Keys.SPACE) {
                     buttonPress.play(0.5f);

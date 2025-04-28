@@ -42,6 +42,10 @@ public class GameScreen implements Screen {
     private Texture birb;
     private Texture animatedbirb;
 
+    private Image deathImage;
+    private Texture deathCrop;
+    private Texture tint;
+
     private BitmapFont scoreFont;
     private BitmapFont gameOverFont;
 
@@ -85,6 +89,7 @@ public class GameScreen implements Screen {
         this.difficulty = difficulty;
 
         loadTextures();
+        deathImage = new Image(deathCrop);
 
         background = new Background(Birb.SCREEN_WIDTH,
                 200.0f,
@@ -241,12 +246,12 @@ public class GameScreen implements Screen {
 
         Color c = game.batch.getColor();
         game.batch.setColor(c.r, c.g, c.g, 0.5f);
-        game.batch.draw(new Texture("tint.png"), 0, 0);
+        game.batch.draw(tint, 0, 0, Birb.SCREEN_WIDTH, Birb.SCREEN_HEIGHT);
         game.batch.setColor(c.r, c.g, c.g, 1f);
         game.batch.end();
 
         table.padTop(50);
-        table.add(new Image(new Texture("deathcrop.png")));
+        table.add(deathImage);
         table.row();
         table.add(gameOverLabel);
         table.row();
@@ -344,6 +349,8 @@ public class GameScreen implements Screen {
     }
 
     private void loadTextures() {
+        deathCrop = new Texture("deathcrop.png");
+        tint = new Texture("tint.png");
         bg = new Texture("softsunset_bg.png");
         karlatornet = new Texture("obs_karlatornet.png");
         lappstiftet = new Texture("obs_lappstiftet.png");
@@ -390,5 +397,10 @@ public class GameScreen implements Screen {
         drop.dispose();
         sound.dispose();
         gameOverSound.dispose();
+        boatBg.dispose();
+        oceanBg.dispose();
+        cloudsBg.dispose();
+        skylineBg.dispose();
+        deathCrop.dispose();
     }
 }
