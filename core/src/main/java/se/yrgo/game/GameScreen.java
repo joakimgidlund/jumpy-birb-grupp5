@@ -66,6 +66,7 @@ public class GameScreen implements Screen {
 
     private Sound sound;
     private Music music;
+    private Sound gameOverSound;
 
     private boolean stopGame; // Stops the game if hit a obstacle
 
@@ -101,6 +102,8 @@ public class GameScreen implements Screen {
 
         sound = Gdx.audio.newSound(Gdx.files.internal("sounds/Seagull.mp3"));
         music = Gdx.audio.newMusic(Gdx.files.internal("sounds/jumpy_birb_theme.mp3"));
+        gameOverSound = Gdx.audio.newSound(Gdx.files.internal("sounds/jumpy_birb_game_over.mp3"));
+
         music.setLooping(true);
         music.setVolume(0.5F);
 
@@ -314,6 +317,8 @@ public class GameScreen implements Screen {
                 || player.getPosition().overlaps(firstObstacle.getTopRect())
                 || (playerPos.y < -20 || playerPos.y > 725)) {
             stopGame = true;
+            music.stop();
+            gameOverSound.play();
         }
     }
 
