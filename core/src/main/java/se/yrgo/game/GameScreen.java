@@ -350,7 +350,7 @@ public class GameScreen implements Screen {
         bg = new Texture("softsunset_bg.png");
         karlatornet = new Texture("obs_karlatornet.png");
         lappstiftet = new Texture("obs_lappstiftet.png");
-        lisebergstornet = new Texture("obs_liseberg.png");
+        lisebergstornet = new Texture("obs_lisebergstornet.png");
         masthugg = new Texture("obs_masthuggskyrkan.png");
         poseidon = new Texture("obs_poseidon.png");
         birb = new Texture("doris.png");
