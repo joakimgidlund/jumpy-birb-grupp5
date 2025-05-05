@@ -105,7 +105,7 @@ public class MainMenu implements Screen {
                         public void run() {
                             game.setScreen(new GameScreen(game, difficultyLevel));
                         }
-                    }, 0.5f);
+                    }, 0.3f);
                 }
                 return false;
             }
@@ -121,7 +121,7 @@ public class MainMenu implements Screen {
                     public void run() {
                         game.setScreen(new GameScreen(game, difficultyLevel));
                     }
-                }, 0.5f);
+                }, 0.3f);
             }
         });
 
@@ -134,7 +134,7 @@ public class MainMenu implements Screen {
                     public void run() {
                         Gdx.app.exit();
                     }
-                }, 0.5f);
+                }, 0.3f);
             }
         });
 
