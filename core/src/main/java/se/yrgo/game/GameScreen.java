@@ -124,8 +124,6 @@ public class GameScreen implements Screen {
 
         scoreFont = new BitmapFont(Gdx.files.internal("fonts/Font_ErasBoldV2.fnt")); // font
         gameOverFont = new BitmapFont(Gdx.files.internal("fonts/Font_ErasBold_40green.fnt")); // font
-
-        createGameOverScreen();
     }
 
     @Override
@@ -167,9 +165,6 @@ public class GameScreen implements Screen {
                 rainLogic();
                 makeItRain();
             }
-        }
-        if (stopGame && score > highScore) { // Sets new high score if the new score is higher
-            setHighScore(score);
         }
 
         input();
@@ -314,9 +309,15 @@ public class GameScreen implements Screen {
         if (player.getPosition().overlaps(firstObstacle.getBottomRect())
                 || player.getPosition().overlaps(firstObstacle.getTopRect())
                 || (playerPos.y < -20 || playerPos.y > 725)) {
+
+            // Sets new high score if the new score is higher
+            if (score > highScore) {
+                setHighScore(score);
+            }
             stopGame = true;
             music.stop();
             gameOverSound.play();
+            createGameOverScreen();
         }
     }
 
@@ -340,7 +341,7 @@ public class GameScreen implements Screen {
         obstacleList.clear();
         music.play();
 
-        createGameOverScreen();
+        // createGameOverScreen();
     }
 
     private void loadTextures() {
